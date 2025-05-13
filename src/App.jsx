@@ -1,0 +1,27 @@
+import Navbar from "./components/Navbar";
+import HeroSection from "./components/HeroSection";
+import Workflow from "./components/Workflow";
+import ProjectSection from "./components/ProjectSection";
+import Footer from "./components/Footer";
+import SkillsSection from "./components/SkillsSection";
+import ContactSection from "./components/ContactSection";
+import EducationSection from "./components/EducationSection";
+
+const App = () => {
+  return (
+    <>
+      <Navbar />
+      <div className="max-w-7xl mx-auto pt-20 px-6">
+        <HeroSection />
+        <Workflow />
+        <SkillsSection />
+        <ProjectSection />
+        <EducationSection />
+        <ContactSection />
+        <Footer />
+      </div>
+    </>
+  );
+};
+
+export default App;
