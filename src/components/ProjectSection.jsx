@@ -5,7 +5,7 @@ const projects = [
   {
     name: "VedAI - Spiritual AI Chatbot",
     github: "https://github.com/krutiknaina/vedai",
-    live: "https://vedai.onrender.com",
+    live: "https://vedai.krutiknaina.com/",
     date: "Apr 2024 - Present",
     description:
       "An AI-powered chatbot based on Hindu scriptures offering answers with spiritual insights, Gita shlokas, and Choghadiya support.",
@@ -15,7 +15,7 @@ const projects = [
     name: "QR-Based Employee Management System",
     // image: "/icons/emp_qr.png",
     github: "https://github.com/KrutikNaina/Employee-ProfileScan.git",
-    live: "https://employee-profilescan.onrender.com",
+    live: "https://www.employee-profilescan.krutiknaina.com/",
     date: "Mar 2024 - Apr 2024",
     description:
       "A web-based system that uses QR scanning to manage and display employee data, including attendance and profiles.",
@@ -24,8 +24,9 @@ const projects = [
   {
     name: "Pest Control Website",
     github: "https://github.com/KrutikNaina/PestControl.git",
-    live: "https://pest-control-beta.vercel.app/",
+    live: "https://pest-control.krutiknaina.com/",
     date: "Feb 2024 - Mar 2024",
+    
     description:
       "A modern responsive website for a pest control business showcasing services, contact, and booking options.",
     technologies: ["HTML", "CSS", "JavaScript", "Responsive Design"],
