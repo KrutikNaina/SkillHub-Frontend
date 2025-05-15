@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FaGraduationCap, FaCalendarAlt } from "react-icons/fa";
+import { Helmet } from 'react-helmet';
 
 const educationData = [
   {
@@ -21,7 +22,17 @@ const educationData = [
 
 const EducationSection = () => {
   return (
-    <div id="education" className="mt-20 px-4 max-w-6xl mx-auto scroll-mt-24">
+    <div id="education" className="mt-20 px-4 max-w-6xl mx-auto scroll-mt-24"><Helmet>
+      <title>Krutik Naina | Full-Stack Developer</title>
+      <meta name="description" content="Portfolio of Krutik Naina, showcasing front-end development projects and skills." />
+      <meta name="keywords" content="Krutik Naina, Front-End Developer, React, Portfolio" />
+      <meta name="robots" content="index, follow" />
+      <meta property="og:title" content="Krutik Naina | Full-Stack Developer" />
+      <meta property="og:description" content="Explore the portfolio of Krutik Naina, a passionate front-end developer." />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://krutiknaina.com/" />
+      <meta property="og:image" content="https://krutiknaina.com/og-image.jpg" />
+    </Helmet>
       <h2 className="text-3xl sm:text-5xl lg:text-6xl text-center tracking-wide mb-16">
         My{" "}
         <span className="bg-gradient-to-r from-[#00ffff] to-[#9900ff] text-transparent bg-clip-text">
@@ -43,22 +54,19 @@ const EducationSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className={`relative w-full md:w-1/2 my-10 px-4 ${
-                isLeft ? "md:pr-10 ml-0 md:ml-0 text-left" : "md:pl-10 ml-auto text-left"
-              }`}
+              className={`relative w-full md:w-1/2 my-10 px-4 ${isLeft ? "md:pr-10 ml-0 md:ml-0 text-left" : "md:pl-10 ml-auto text-left"
+                }`}
             >
               {/* Dot on center line */}
               <div
-                className={`absolute top-1/2 w-4 h-4 bg-gradient-to-r from-[#00ffff] to-[#9900ff] rounded-full transform -translate-y-1/2 ${
-                  isLeft ? "right-[-34px]" : "left-[-34px]"
-                }`}
+                className={`absolute top-1/2 w-4 h-4 bg-gradient-to-r from-[#00ffff] to-[#9900ff] rounded-full transform -translate-y-1/2 ${isLeft ? "right-[-34px]" : "left-[-34px]"
+                  }`}
               ></div>
 
               {/* Connector line from dot to card */}
               <div
-                className={`absolute top-1/2 h-1 bg-gradient-to-r from-[#00ffff] to-[#9900ff] transform -translate-y-1/2 ${
-                  isLeft ? "right-[-34px] w-[34px]" : "left-[-34px] w-[34px]"
-                }`}
+                className={`absolute top-1/2 h-1 bg-gradient-to-r from-[#00ffff] to-[#9900ff] transform -translate-y-1/2 ${isLeft ? "right-[-34px] w-[34px]" : "left-[-34px] w-[34px]"
+                  }`}
               ></div>
 
               <div className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-6 shadow-lg hover:scale-105 hover:shadow-[0_0_25px_#00ffff40] transition-all duration-300">

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FaMedal, FaCalendarAlt } from "react-icons/fa"; // Changed from FaCertificate to FaMedal
+import { Helmet } from 'react-helmet';
 
 const achievements = [
   {
@@ -17,6 +18,17 @@ const achievements = [
 const AchievementSection = () => {
   return (
     <div className="mt-20 px-4 max-w-5xl mx-auto">
+      <Helmet>
+        <title>Krutik Naina | Full-Stack Developer</title>
+        <meta name="description" content="Portfolio of Krutik Naina, showcasing front-end development projects and skills." />
+        <meta name="keywords" content="Krutik Naina, Front-End Developer, React, Portfolio" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Krutik Naina | Full-Stack Developer" />
+        <meta property="og:description" content="Explore the portfolio of Krutik Naina, a passionate front-end developer." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://krutiknaina.com/" />
+        <meta property="og:image" content="https://krutiknaina.com/og-image.jpg" />
+      </Helmet>
       <h2 id="achievements" className="text-3xl sm:text-5xl lg:text-6xl text-center tracking-wide mb-12 scroll-mt-24">
         My{" "}
         <span className="bg-gradient-to-r from-[#00ffff] to-[#9900ff] text-transparent bg-clip-text">

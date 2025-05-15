@@ -1,4 +1,5 @@
 import { Github, ExternalLink } from "lucide-react";
+import { Helmet } from 'react-helmet';
 
 const projects = [
   {
@@ -8,7 +9,7 @@ const projects = [
     date: "Apr 2024 - Present",
     description:
       "An AI-powered chatbot based on Hindu scriptures offering answers with spiritual insights, Gita shlokas, and Choghadiya support.",
-    technologies: ["Django", "SQLite","Gemini API","Bootstrap", "JavaScript"],
+    technologies: ["Django", "SQLite", "Gemini API", "Bootstrap", "JavaScript"],
   },
   {
     name: "QR-Based Employee Management System",
@@ -34,6 +35,17 @@ const projects = [
 const ProjectSection = () => {
   return (
     <div className="mt-20 px-4">
+      <Helmet>
+        <title>Krutik Naina | Full-Stack Developer</title>
+        <meta name="description" content="Portfolio of Krutik Naina, showcasing front-end development projects and skills." />
+        <meta name="keywords" content="Krutik Naina, Front-End Developer, React, Portfolio" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Krutik Naina | Full-Stack Developer" />
+        <meta property="og:description" content="Explore the portfolio of Krutik Naina, a passionate front-end developer." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://krutiknaina.com/" />
+        <meta property="og:image" content="https://krutiknaina.com/og-image.jpg" />
+      </Helmet>
       <h2 id="projects" className="text-3xl sm:text-5xl lg:text-6xl text-center tracking-wide mb-12 scroll-mt-20">
         My{" "}
         <span className="bg-gradient-to-r from-[#00ffff] to-[#9900ff] text-transparent bg-clip-text">
@@ -47,7 +59,7 @@ const ProjectSection = () => {
             key={index}
             className="border border-white/10 rounded-2xl p-6 shadow-md hover:shadow-[0_0_30px_#00ffff30] hover:scale-[1.02] transition-transform duration-300 hover:scale-105 hover:shadow-[0_0_20px_#00ffff40]"
           >
-          
+
             <div className="mb-2 flex items-center justify-between">
               <h3 className="text-xl font-semibold text-white">
                 {project.name}

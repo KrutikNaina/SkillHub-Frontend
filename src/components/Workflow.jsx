@@ -2,10 +2,22 @@ import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import codeImg from "../assets/aboutus.png";
 import { checklistItems } from "../constants";
+import { Helmet } from 'react-helmet';
 
 const Workflow = () => {
   return (
     <div className="mt-20">
+      <Helmet>
+        <title>Krutik Naina | Full-Stack Developer</title>
+        <meta name="description" content="Portfolio of Krutik Naina, showcasing front-end development projects and skills." />
+        <meta name="keywords" content="Krutik Naina, Front-End Developer, React, Portfolio" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Krutik Naina | Full-Stack Developer" />
+        <meta property="og:description" content="Explore the portfolio of Krutik Naina, a passionate front-end developer." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://krutiknaina.com/" />
+        <meta property="og:image" content="https://krutiknaina.com/og-image.jpg" />
+      </Helmet>
       <h2 id="about" className="text-3xl sm:text-5xl lg:text-6xl text-center mt-6 tracking-wide scroll-mt-20">
         About{" "}
         <span className="bg-gradient-to-r from-[#00ffff] to-[#9900ff] text-transparent bg-clip-text">
