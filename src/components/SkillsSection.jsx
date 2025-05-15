@@ -17,8 +17,8 @@ const skills = [
   
   const SkillsSection = () => {
     return (
-      <div id="skills" className="mt-20 px-4">
-        <h2 className="text-3xl sm:text-5xl lg:text-6xl text-center tracking-wide mb-12">
+      <div className="mt-20 px-4">
+        <h2 id="skills" className="text-3xl sm:text-5xl lg:text-6xl text-center tracking-wide mb-12 scroll-mt-20">
           Skills &{" "}
           <span className="bg-gradient-to-r from-[#00ffff] to-[#9900ff] text-transparent bg-clip-text">
             Abilities

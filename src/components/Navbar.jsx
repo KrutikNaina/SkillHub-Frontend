@@ -10,6 +10,7 @@ const Header = () => {
 
         {/* Desktop-only links */}
         <a href="#education" className="hidden md:inline hover:text-[#00ffff] transition-colors duration-300">Education</a>
+        <a href="#achievements" className="hidden md:inline hover:text-[#00ffff] transition-colors duration-300">Achievements</a>
         <a href="#contact" className="hidden md:inline hover:text-[#00ffff] transition-colors duration-300">Contact</a>
       </nav>
     </header>

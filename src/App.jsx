@@ -6,9 +6,8 @@ import Footer from "./components/Footer";
 import SkillsSection from "./components/SkillsSection";
 import ContactSection from "./components/ContactSection";
 import EducationSection from "./components/EducationSection";
+import Achievements from "./components/Achievements";
 import { Helmet } from 'react-helmet';
-
-// import { Analytics } from "@vercel/analytics/next"
 
 const App = () => {
   return (
@@ -33,6 +32,7 @@ const App = () => {
         <SkillsSection />
         <ProjectSection />
         <EducationSection />
+        <Achievements />
         <ContactSection />
         <Footer />
       </div>

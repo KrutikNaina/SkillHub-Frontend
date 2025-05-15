@@ -9,6 +9,11 @@
   color-scheme: dark;
 } */
 
+html {
+  scroll-behavior: smooth;
+}
+
+
 body {
   margin: 0;
   padding: 0;
@@ -40,10 +45,10 @@ body {
   animation: float1 6s ease-in-out infinite;
 }
 .animate-float2 {
-  animation: float2 8s ease-in-out infinite;
+  animation: float2 6s ease-in-out infinite;
 }
 .animate-float3 {
-  animation: float3 7s ease-in-out infinite;
+  animation: float3 6s ease-in-out infinite;
 }
 
 /* CSS for Floating Motion */

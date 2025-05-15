@@ -3,75 +3,89 @@ import { Github, ExternalLink } from "lucide-react";
 const projects = [
   {
     name: "VedAI - Spiritual AI Chatbot",
-    image: "/icons/vedai.png",
     github: "https://github.com/krutiknaina/vedai",
     live: "https://vedai.onrender.com",
+    date: "Apr 2024 - Present",
+    description:
+      "An AI-powered chatbot based on Hindu scriptures offering answers with spiritual insights, Gita shlokas, and Choghadiya support.",
+    technologies: ["Django", "SQLite","Gemini API","Bootstrap", "JavaScript"],
   },
   {
     name: "QR-Based Employee Management System",
-    image: "/icons/emp_qr.png",
+    // image: "/icons/emp_qr.png",
     github: "https://github.com/KrutikNaina/Employee-ProfileScan.git",
     live: "https://employee-profilescan.onrender.com",
+    date: "Mar 2024 - Apr 2024",
+    description:
+      "A web-based system that uses QR scanning to manage and display employee data, including attendance and profiles.",
+    technologies: ["Django", "SQLite", "QR Code", "Bootstrap", "JavaScript"],
   },
   {
     name: "Pest Control Website",
-    image: "/icons/service.png",
     github: "https://github.com/KrutikNaina/PestControl.git",
     live: "https://pest-control-beta.vercel.app/",
+    date: "Feb 2024 - Mar 2024",
+    description:
+      "A modern responsive website for a pest control business showcasing services, contact, and booking options.",
+    technologies: ["HTML", "CSS", "JavaScript", "Responsive Design"],
   },
-//   {
-//     name: "Python Weather App",
-//     image: "/projects/weather.png",
-//     github: "https://github.com/krutiknaina/python-weather",
-//     live: "#",
-//   },
 ];
 
 const ProjectSection = () => {
   return (
-    <div id="projects" className="mt-20 px-4">
-      <h2 className="text-3xl sm:text-5xl lg:text-6xl text-center tracking-wide mb-12">
+    <div className="mt-20 px-4">
+      <h2 id="projects" className="text-3xl sm:text-5xl lg:text-6xl text-center tracking-wide mb-12 scroll-mt-20">
         My{" "}
         <span className="bg-gradient-to-r from-[#00ffff] to-[#9900ff] text-transparent bg-clip-text">
           Projects
         </span>
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
         {projects.map((project, index) => (
           <div
             key={index}
-            className="bg-white/5 border border-white/10 rounded-xl overflow-hidden shadow-lg hover:shadow-[0_0_25px_#00ffff40] transition-transform hover:scale-105 duration-300"
+            className="border border-white/10 rounded-2xl p-6 shadow-md hover:shadow-[0_0_30px_#00ffff30] hover:scale-[1.02] transition-transform duration-300 hover:scale-105 hover:shadow-[0_0_20px_#00ffff40]"
           >
-            <img
-              src={project.image}
-              alt={project.name}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-6">
-              <h3 className="text-xl text-white font-semibold mb-4">
+          
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-white">
                 {project.name}
               </h3>
-              <div className="flex space-x-6">
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white hover:text-[#00ffff] transition"
-                  title="GitHub"
+              <p className="text-sm text-gray-400">{project.date}</p>
+            </div>
+            <p className="text-gray-300 mb-4">{project.description}</p>
+
+            <div className="flex flex-wrap gap-2 mb-4">
+              {project.technologies.map((tech, i) => (
+                <span
+                  key={i}
+                  className="border border-white/20 text-sm text-white px-3 py-1 rounded-full bg-white/5"
                 >
-                  <Github size={22} />
-                </a>
-                <a
-                  href={project.live}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white hover:text-[#9900ff] transition"
-                  title="Live Demo"
-                >
-                  <ExternalLink size={22} />
-                </a>
-              </div>
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex space-x-6">
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-[#00ffff] transition"
+                title="GitHub"
+              >
+                <Github size={22} />
+              </a>
+              <a
+                href={project.live}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-[#9900ff] transition"
+                title="Live Demo"
+              >
+                <ExternalLink size={22} />
+              </a>
             </div>
           </div>
         ))}

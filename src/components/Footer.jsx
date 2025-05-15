@@ -1,54 +1,49 @@
-import { resourcesLinks, platformLinks, communityLinks } from "../constants";
+import {
+  Github,
+  Linkedin,
+  Mail,
+} from "lucide-react";
+import {
+  resourcesLinks,
+  platformLinks,
+  communityLinks,
+} from "../constants";
+
 const Footer = () => {
   return (
-    <footer className="mt-20 border-t py-10 border-neutral-700">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-          <h3 className="text-md font-semibold mb-4">Resources</h3>
-          <ul className="space-y-2">
-            {resourcesLinks.map((link, index) => (
-              <li key={index}>
-                <a
-                  href={link.href}
-                  className="text-neutral-300 hover:text-white"
-                >
-                  {link.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-md font-semibold mb-4">Platform</h3>
-          <ul className="space-y-2">
-            {platformLinks.map((link, index) => (
-              <li key={index}>
-                <a
-                  href={link.href}
-                  className="text-neutral-300 hover:text-white"
-                >
-                  {link.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-md font-semibold mb-4">Community</h3>
-          <ul className="space-y-2">
-            {communityLinks.map((link, index) => (
-              <li key={index}>
-                <a
-                  href={link.href}
-                  className="text-neutral-300 hover:text-white"
-                >
-                  {link.text}
-                </a>
-              </li>
-            ))}
-          </ul>
+    <footer>
+      {/* Bottom Row */}
+      <br/><br/>
+      <div className="flex flex-col md:flex-row justify-between items-center border-t border-neutral-700 pt-6">
+        <p className="text-white text-base md:text-lg text-center">
+          © 2025 Krutik Naina — Passionate about crafting meaningful digital experiences.
+        </p>
+        <div className="flex gap-6 mt-4 md:mt-0">
+          <a
+            href="https://www.linkedin.com/in/krutik-naina"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neutral-300 hover:text-[#0077b5] transform hover:scale-110 transition duration-300"
+          >
+            <Linkedin size={22} />
+          </a>
+          <a
+            href="https://github.com/krutiknaina"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neutral-300 hover:text-white transform hover:scale-110 transition duration-300"
+          >
+            <Github size={22} />
+          </a>
+          <a
+            href="mailto:krutiknaina29@gmail.com"
+            className="text-neutral-300 hover:text-red-400 transform hover:scale-110 transition duration-300"
+          >
+            <Mail size={22} />
+          </a>
         </div>
       </div>
+      <br/>
     </footer>
   );
 };

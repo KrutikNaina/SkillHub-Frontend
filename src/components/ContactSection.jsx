@@ -7,8 +7,8 @@ const ContactSection = () => {
   const floatingClass = isHovered ? "floating motion-safe" : "";
 
   return (
-    <div id="contact" className="mt-20 px-4 max-w-3xl mx-auto">
-      <h2 className="text-3xl sm:text-5xl text-center mb-10">
+    <div className="mt-20 px-4 max-w-5xl mx-auto">
+      <h2 id="contact" className="text-3xl sm:text-5xl lg:text-6xl text-center mb-10 scroll-mt-20">
         Contact{" "}
         <span className="bg-gradient-to-r from-[#00ffff] to-[#9900ff] text-transparent bg-clip-text">
           Me
