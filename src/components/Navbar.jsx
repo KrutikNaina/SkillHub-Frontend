@@ -1,20 +1,39 @@
-const Header = () => {
+import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
+
+const Navbar = () => {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className="fixed top-6 left-0 right-0 mx-auto  z-50 backdrop-blur-lg bg-white/10 border border-white/30 rounded-full px-6 md:px-10 py-3 shadow-lg w-[90%] max-w-4xl">
-      <nav className="flex flex-wrap justify-center gap-4 md:gap-8 text-sm md:text-base text-white font-semibold ">
-        {/* Always visible */}
-        <a href="#home" className="hover:text-[#00ffff] transition-colors duration-300">Home</a>
-        <a href="#about" className="hover:text-[#00ffff] transition-colors duration-300">About</a>
-        <a href="#skills" className="hover:text-[#00ffff] transition-colors duration-300">Skills</a>
-        <a href="#projects" className="hover:text-[#00ffff] transition-colors duration-300">Projects</a>
+    <nav
+      className={`w-full fixed top-0 z-50 transition-all ${
+        scrolled ? 'backdrop-blur-md shadow-md' : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Left: Logo */}
+        <h1 className="text-2xl font-bold text-blue-600">SkillHub</h1>
 
-        {/* Desktop-only links */}
-        <a href="#education" className="hidden md:inline hover:text-[#00ffff] transition-colors duration-300">Education</a>
-        <a href="#achievements" className="hidden md:inline hover:text-[#00ffff] transition-colors duration-300">Achievements</a>
-        <a href="#contact" className="hidden md:inline hover:text-[#00ffff] transition-colors duration-300">Contact</a>
-      </nav>
-    </header>
-  );
-};
+        {/* Right: Join Now Button */}
+        <a
+          href="#join"
+          className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition"
+        >
+          Join Now
+        </a>
+      </div>
+    </nav>
+  )
+}
 
-export default Header;
+export default Navbar

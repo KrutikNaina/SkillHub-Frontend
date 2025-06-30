@@ -4,7 +4,7 @@ function HomePage() {
   return (
     <>
       <Helmet>
-        <title>Krutik Naina | Full-Stack Developer</title>
+        <title>SkillHub</title>
         <meta name="description" content="Portfolio of Krutik Naina, showcasing front-end development projects and skills." />
         <meta name="keywords" content="Krutik Naina, Front-End Developer, React, Portfolio" />
         <meta name="robots" content="index, follow" />

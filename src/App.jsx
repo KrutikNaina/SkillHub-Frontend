@@ -1,47 +1,57 @@
-import Navbar from "./components/Navbar";
-import HeroSection from "./components/HeroSection";
-import Workflow from "./components/Workflow";
-import ProjectSection from "./components/ProjectSection";
-import Footer from "./components/Footer";
-import SkillsSection from "./components/SkillsSection";
-import ContactSection from "./components/ContactSection";
-import EducationSection from "./components/EducationSection";
-import Achievements from "./components/Achievements";
-import { Helmet } from 'react-helmet';
-import SEO from "./components/SEO";
+import './index.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-const App = () => {
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import Login from './components/Login'
+import Home from './pages/Home'
+
+import { ArrowUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
+
+function App() {
   return (
-    <>
-    <div>
-    <Helmet>
-        <title>Krutik Naina | Full-Stack Developer</title>
-        <meta name="description" content="Portfolio of Krutik Naina, showcasing front-end development projects and skills." />
-        <meta name="keywords" content="Krutik Naina, Front-End Developer, React, Portfolio" />
-        <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Krutik Naina | Full-Stack Developer" />
-        <meta property="og:description" content="Explore the portfolio of Krutik Naina, a passionate front-end developer." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://krutiknaina.com/" />
-        <meta property="og:image" content="https://krutiknaina.com/og-image.jpg" />
-      </Helmet>
-      {/* Page content */}
-      <Navbar />
-      <div className="max-w-7xl mx-auto pt-20 px-6">
-        <HeroSection />
-        <Workflow />
-        <SkillsSection />
-        <ProjectSection />
-        <EducationSection />
-        <Achievements />
-        <ContactSection />
-        <Footer />
-        <SEO />
-      </div>
-      {/* <Analytics /> */}
-      </div>
-    </>
-  );
-};
+    <Router>
+      <div className="font-sans text-gray-800 dark:bg-gray-900 dark:text-white">
+        <Navbar />
 
-export default App;
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+
+        <Footer />
+        <BackToTopButton />
+      </div>
+    </Router>
+  )
+}
+
+export default App
+
+// Same BackToTopButton code
+const BackToTopButton = () => {
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const toggleVisibility = () => {
+      setVisible(window.scrollY > 300)
+    }
+    window.addEventListener('scroll', toggleVisibility)
+    return () => window.removeEventListener('scroll', toggleVisibility)
+  }, [])
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+
+  return (
+    visible && (
+      <button
+        onClick={scrollToTop}
+        className="fixed bottom-6 right-6 z-50 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all duration-300 rounded-md flex items-center gap-2"
+        aria-label="Back to Top"
+      >
+        <ArrowUp className="w-5 h-5" />
+        <span className="hidden sm:inline">Top</span>
+      </button>
+    )
+  )
+}
