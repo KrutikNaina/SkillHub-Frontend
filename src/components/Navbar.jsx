@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-
+import { Link } from 'react-router-dom' // ✅ Add this import
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false)
@@ -25,12 +24,12 @@ const Navbar = () => {
         <h1 className="text-2xl font-bold text-blue-600">SkillHub</h1>
 
         {/* Right: Join Now Button */}
-        <a
-          href="#join"
+        <Link
+          to="/login" // ✅ This now routes to the login page
           className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition"
         >
           Join Now
-        </a>
+        </Link>
       </div>
     </nav>
   )

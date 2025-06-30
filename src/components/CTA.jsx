@@ -14,7 +14,6 @@ const CTA = () => {
 
         {/* CTA BUTTON */}
         <a
-          href="#"
           className="inline-block bg-blue-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-700 transition"
         >
           🚀 Join SkillHub Now

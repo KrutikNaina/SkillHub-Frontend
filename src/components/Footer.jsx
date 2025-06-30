@@ -5,8 +5,8 @@ const Footer = () => {
     <footer className="w-full border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 sm:px-6 lg:px-20 py-8">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Brand Name */}
-        <div className="text-xl font-semibold text-gray-900 dark:text-white">
-          Skill<span className="text-blue-600">Hub</span>
+        <div className="text-xl font-bold text-blue-600 dark:text-white">
+          SkillHub
         </div>
 
         {/* External Links */}
