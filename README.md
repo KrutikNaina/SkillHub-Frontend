@@ -30,6 +30,17 @@ Welcome to the **Frontend** of **SkillHub**, a personal growth and skill trackin
 
 ---
 
+## ✅ Completed Pages
+
+- Landing Page (Hero, Features, Testimonials)
+- Login Page (Google + GitHub UI)
+- Profile Page
+- Skill Repository Page
+- Progress Logging Timeline
+- Milestones & Badges
+
+---
+
 ## 🧠 Developer Notes
 
 - Auth buttons show "Coming Soon" – will connect in backend phase
