@@ -24,7 +24,7 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className="w-full bg-white dark:bg-gray-900 px-4 sm:px-6 lg:px-20 py-20">
+    <section className="w-full bg-[#f4f6fa] dark:bg-gray-900 px-4 sm:px-6 lg:px-20 py-20">
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
           What <span className="text-blue-600">Learners Say</span>

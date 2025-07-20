@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 
 const Hero = () => {
   return (
-    <section className="w-full min-h-screen pt-24 flex items-center justify-center bg-white dark:bg-gray-900 px-4 sm:px-6 lg:px-20">
+    <section className="w-full min-h-screen pt-24 flex items-center justify-center bg-[#f4f6fa] dark:bg-gray-900 px-4 sm:px-6 lg:px-20">
       <div className="w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-10">
         {/* LEFT TEXT SECTION */}
         <div className="w-full lg:w-1/2">

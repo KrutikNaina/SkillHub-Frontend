@@ -2,7 +2,7 @@ import { Github, Globe } from 'lucide-react'
 
 const Footer = () => {
   return (
-    <footer className="w-full border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 sm:px-6 lg:px-20 py-8">
+    <footer className="w-full border-t bg-[#f4f6fa] border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 sm:px-6 lg:px-20 py-8">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Brand Name */}
         <div className="text-xl font-bold text-blue-600 dark:text-white">

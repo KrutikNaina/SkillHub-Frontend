@@ -14,7 +14,7 @@ const About = () => {
   }, [])
 
   return (
-    <section className="w-full min-h-screen py-20 bg-white dark:bg-gray-900 px-4 sm:px-6 lg:px-20 flex items-center justify-center">
+    <section className="w-full min-h-screen py-20 bg-[#f4f6fa] dark:bg-gray-900 px-4 sm:px-6 lg:px-20 flex items-center justify-center">
       <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-12">
         {/* LEFT IMAGE SECTION */}
         <div className="w-full lg:w-1/2 flex justify-center">
