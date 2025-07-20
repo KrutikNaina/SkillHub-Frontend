@@ -1,52 +1,99 @@
-import { useState } from 'react'
-import { Github } from 'lucide-react'
-import googleLogo from '../assets/google-logo.svg'
+import { useEffect, useState } from 'react';
+import { Github } from 'lucide-react';
+import googleLogo from '../assets/google-logo.svg';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [warning, setWarning] = useState('')
+  const [warning, setWarning] = useState('');
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const listener = (event) => {
+      const allowedOrigins = ['http://localhost:5000', 'http://localhost:5173'];
+      if (!allowedOrigins.includes(event.origin)) return;
+
+      if (event.data?.type === 'oauth-success') {
+        const token = event.data.token;
+
+        if (token) {
+          localStorage.setItem('token', token);
+
+          // ✅ Decode user info (optional)
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          setUser(payload);
+
+          navigate('/profile');
+        } else {
+          setWarning('Token missing in OAuth response.');
+        }
+      }
+
+      window.removeEventListener('message', listener);
+    };
+
+    window.addEventListener('message', listener);
+    return () => window.removeEventListener('message', listener);
+  }, [navigate]);
+
+  const handleGoogleLogin = () => {
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
+    window.open(
+      'http://localhost:5000/auth/google',
+      'GoogleAuth',
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
+  };
 
   const handleClick = (provider) => {
-    setWarning(`${provider} login coming soon!`)
-    setTimeout(() => setWarning(''), 3000)
-  }
+    setWarning(`${provider} login coming soon!`);
+    setTimeout(() => setWarning(''), 3000);
+  };
 
   return (
-    <section className="w-full min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-20 bg-white dark:bg-gray-900">
-      <div className="max-w-md w-full p-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center">
+    <section className="w-full min-h-screen flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
+      <div className="max-w-md w-full p-8 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+        <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white">
           Sign in to <span className="text-blue-600">SkillHub</span>
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 text-center mt-2 mb-8 text-sm">
+        <p className="text-gray-600 dark:text-gray-400 text-center mt-2 mb-6">
           Track your skills, join the community, and grow faster.
         </p>
 
-        {/* Google Sign-in */}
         <button
-          onClick={() => handleClick('Google')}
-          className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white py-3 px-4 rounded-lg hover:shadow-md hover:border-blue-600 transition-all duration-300 mb-4"
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 py-3 px-4 rounded-lg hover:border-blue-600 transition mb-4"
         >
           <img src={googleLogo} alt="Google" className="w-5 h-5" />
           <span>Continue with Google</span>
         </button>
 
-        {/* GitHub Sign-in */}
         <button
           onClick={() => handleClick('GitHub')}
-          className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-all duration-300"
+          className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition"
         >
           <Github className="w-5 h-5" />
           <span>Continue with GitHub</span>
         </button>
 
-        {/* Warning Message */}
+        {user && (
+          <div className="mt-4 text-sm text-green-600 text-center">
+            ✅ Welcome, {user.name} ({user.email})
+          </div>
+        )}
+
         {warning && (
-          <div className="mt-4 text-sm text-yellow-600 dark:text-yellow-400 text-center">
+          <div className="mt-4 text-sm text-yellow-600 text-center">
             ⚠️ {warning}
           </div>
         )}
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
