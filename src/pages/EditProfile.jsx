@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { Github, Linkedin, Twitter, UploadCloud } from 'lucide-react'
 import avatarDefault from '../assets/krutik-naina.jpg'
+import axios from 'axios'
 
 const EditProfile = () => {
   const [avatar, setAvatar] = useState(avatarDefault)
-  const [name, setName] = useState('Krutik Naina')
-  const [bio, setBio] = useState('MERN Developer | Learning & Building at SkillHub 🚀')
-  const [github, setGithub] = useState('https://github.com/KrutikNaina')
-  const [linkedin, setLinkedin] = useState('https://linkedin.com')
-  const [twitter, setTwitter] = useState('https://twitter.com')
+  const [name, setName] = useState('')
+  const [bio, setBio] = useState('')
+  const [github, setGithub] = useState('')
+  const [linkedin, setLinkedin] = useState('')
+  const [twitter, setTwitter] = useState('')
+  const [message, setMessage] = useState('')
 
   const handleImageChange = (e) => {
     const file = e.target.files[0]
@@ -18,6 +20,40 @@ const EditProfile = () => {
         setAvatar(reader.result)
       }
       reader.readAsDataURL(file)
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      const userId = localStorage.getItem('userId') || '64fe1b8c49d98d7237c305e6' // fallback example
+
+      const res = await axios.post(
+        'http://localhost:5000/api/profile/create',
+        {
+          userId,
+          fullName: name,
+          bio,
+          avatar,
+          github,
+          linkedin,
+          twitter,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      )
+      
+
+      setMessage('✅ Profile created successfully!')
+      console.log(res.data)
+    } catch (err) {
+      console.error(err)
+      setMessage('❌ Failed to create profile')
     }
   }
 
@@ -40,7 +76,7 @@ const EditProfile = () => {
           </label>
         </div>
 
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <Input label="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
           <TextArea label="Bio" value={bio} onChange={(e) => setBio(e.target.value)} />
 
@@ -63,10 +99,17 @@ const EditProfile = () => {
             onChange={(e) => setTwitter(e.target.value)}
           />
 
+          {message && (
+            <div className="text-center mt-4 text-sm font-medium">
+              {message}
+            </div>
+          )}
+
           <div className="flex justify-end gap-4 mt-6">
             <button
               type="button"
               className="px-5 py-2 rounded-lg bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white"
+              onClick={() => window.location.reload()}
             >
               Cancel
             </button>

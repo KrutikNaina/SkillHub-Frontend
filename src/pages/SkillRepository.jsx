@@ -1,22 +1,33 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AddSkillModal from './AddSkillModal'
 import { Plus } from 'lucide-react'
+import axios from 'axios'
 
 const SkillRepository = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [skills, setSkills] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const [skills, setSkills] = useState([
-    {
-      title: 'Web Development',
-      coverImage: 'https://via.placeholder.com/300',
-      startDate: '2025-07-01',
-      targetGoal: '100 hours',
-      description: 'Full-stack MERN learning journey',
+  // Fetch skills from MongoDB
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/skills')
+        setSkills(res.data.skills || [])
+        setLoading(false)
+      } catch (err) {
+        setError('Failed to load skills.')
+        setLoading(false)
+      }
     }
-  ])
 
+    fetchSkills()
+  }, [])
+
+  // Add new skill manually
   const addStaticSkill = (skill) => {
-    setSkills([...skills, skill])
+    setSkills((prevSkills) => [...prevSkills, skill])
   }
 
   return (
@@ -31,25 +42,33 @@ const SkillRepository = () => {
         </button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {skills.map((skill, index) => (
-          <div
-            key={index}
-            className="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 shadow hover:shadow-lg transition"
-          >
-            {skill.coverImage && (
-              <img src={skill.coverImage} alt={skill.title} className="w-full h-40 object-cover" />
-            )}
-            <div className="p-4">
-              <h3 className="text-xl font-semibold">{skill.title}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{skill.description}</p>
-              <div className="text-xs mt-3 text-gray-600 dark:text-gray-400">
-                🎯 {skill.targetGoal} • 📅 {skill.startDate}
+      {loading ? (
+        <p className="text-gray-600 dark:text-gray-400">Loading skills...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : skills.length === 0 ? (
+        <p className="text-gray-600 dark:text-gray-400">No skills found.</p>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {skills.map((skill, index) => (
+            <div
+              key={index}
+              className="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 shadow hover:shadow-lg transition"
+            >
+              {skill.coverImage && (
+                <img src={skill.coverImage} alt={skill.title} className="w-full h-40 object-cover" />
+              )}
+              <div className="p-4">
+                <h3 className="text-xl font-semibold">{skill.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{skill.description}</p>
+                <div className="text-xs mt-3 text-gray-600 dark:text-gray-400">
+                  🎯 {skill.targetGoal} • 📅 {skill.startDate}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <AddSkillModal
         isOpen={isModalOpen}

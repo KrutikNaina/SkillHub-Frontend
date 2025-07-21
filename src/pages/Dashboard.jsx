@@ -1,100 +1,77 @@
-import { Link } from 'react-router-dom';
-import { FaUserEdit, FaTasks, FaChartLine, FaBook, FaPlus, FaSignOutAlt } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
-
-// Dummy user context (replace with actual Google auth user)
-const mockUser = {
-  displayName: "Krutik Naina"
-};
+// src/pages/Dashboard.jsx
+import React from "react";
+import { Link } from "react-router-dom";
+import { LayoutDashboard, BookOpen, ListTodo, User } from "lucide-react";
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    // Replace this with your actual auth logic
-    setUser(mockUser); 
-  }, []);
-
-  const handleLogout = () => {
-    // TODO: implement logout logic
-    console.log("Logged out");
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-[#f4f6fa]">
-      
-      {/* Header */}
-      <header className="bg-white shadow px-6 py-4 flex justify-between items-center rounded-b-2xl">
-        <h1 className="text-2xl font-bold text-blue-700">SkillHub</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-blue-600 font-medium">
-            Welcome, {user?.displayName || "User"} 👋
-          </span>
-          <button 
-            onClick={handleLogout}
-            className="flex items-center gap-1 px-3 py-1.5 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition text-sm"
-          >
-            <FaSignOutAlt /> Logout
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen flex bg-gradient-to-br from-purple-100 to-pink-100">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white shadow-xl rounded-r-3xl p-6 hidden md:block">
+        <h2 className="text-2xl font-bold text-purple-700 mb-10">SkillHub</h2>
+        <nav className="flex flex-col gap-6 text-gray-700">
+          <Link to="/dashboard" className="flex items-center gap-3 hover:text-purple-600">
+            <LayoutDashboard className="w-5 h-5" />
+            Dashboard
+          </Link>
+          <Link to="/skill-repository" className="flex items-center gap-3 hover:text-purple-600">
+            <BookOpen className="w-5 h-5" />
+            Skills
+          </Link>
+          <Link to="/logs" className="flex items-center gap-3 hover:text-purple-600">
+            <ListTodo className="w-5 h-5" />
+            Progress Logs
+          </Link>
+          <Link to="/profile" className="flex items-center gap-3 hover:text-purple-600">
+            <User className="w-5 h-5" />
+            Profile
+          </Link>
+        </nav>
+      </aside>
 
       {/* Main Content */}
-      <main className="flex-grow px-6 py-4">
-        {/* Top Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition">
-            <p className="text-gray-500">Total Skills</p>
-            <h3 className="text-2xl font-semibold text-blue-600">12</h3>
-          </div>
-          <div className="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition">
-            <p className="text-gray-500">Milestones Completed</p>
-            <h3 className="text-2xl font-semibold text-blue-600">4</h3>
-          </div>
-          <div className="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition">
-            <p className="text-gray-500">Days Active</p>
-            <h3 className="text-2xl font-semibold text-blue-600">26</h3>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <Link to="/edit-profile" className="flex flex-col items-center bg-white p-5 rounded-2xl shadow hover:bg-blue-50 transition">
-            <FaUserEdit size={28} className="text-blue-600 mb-2" />
-            <span className="text-sm font-semibold">Edit Profile</span>
-          </Link>
-          <Link to="/logs" className="flex flex-col items-center bg-white p-5 rounded-2xl shadow hover:bg-blue-50 transition">
-            <FaTasks size={28} className="text-blue-600 mb-2" />
-            <span className="text-sm font-semibold">Progress Log</span>
-          </Link>
-          <Link to="/milestones" className="flex flex-col items-center bg-white p-5 rounded-2xl shadow hover:bg-blue-50 transition">
-            <FaChartLine size={28} className="text-blue-600 mb-2" />
-            <span className="text-sm font-semibold">Milestones</span>
-          </Link>
-          <Link to="/skill-repository" className="flex flex-col items-center bg-white p-5 rounded-2xl shadow hover:bg-blue-50 transition">
-            <FaBook size={28} className="text-blue-600 mb-2" />
-            <span className="text-sm font-semibold">Skills</span>
-          </Link>
-        </div>
-
-        {/* Add Skill CTA */}
-        <div className="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-2xl flex items-center justify-between shadow-lg">
+      <main className="flex-1 p-6 md:p-10">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-10">
           <div>
-            <h3 className="text-xl font-semibold">Add New Skill</h3>
-            <p className="text-sm text-blue-100">Keep growing by tracking your new skill today!</p>
+            <h1 className="text-3xl font-bold text-purple-800">Welcome back, Krutik! 👋</h1>
+            <p className="text-sm text-gray-600 mt-1">Here’s your skill-building dashboard.</p>
           </div>
-          <Link to="/add-skillModal" className="bg-white text-blue-600 font-semibold px-4 py-2 rounded-xl hover:bg-blue-100 transition flex items-center gap-2">
-            <FaPlus /> Add Skill
-          </Link>
+          <img
+            src="https://api.dicebear.com/7.x/identicon/svg?seed=krutik"
+            alt="avatar"
+            className="w-10 h-10 rounded-full border-2 border-purple-400 shadow-sm"
+          />
+        </div>
+
+        {/* Dashboard Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card title="Skills Added" value="12" color="from-purple-400 to-purple-600" />
+          <Card title="Milestones Achieved" value="5" color="from-pink-400 to-pink-600" />
+          <Card title="Progress Logs" value="21" color="from-blue-400 to-blue-600" />
+        </div>
+
+        {/* Recent Activity or Section */}
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-4 text-purple-700">Recent Logs</h2>
+          <ul className="bg-white rounded-xl p-6 shadow-md space-y-4">
+            <li className="border-b pb-2">✔️ Learned React Props – 2 days ago</li>
+            <li className="border-b pb-2">✔️ Logged a new JavaScript project – 4 days ago</li>
+            <li>✔️ Achieved ‘Git Basics’ milestone – 6 days ago</li>
+          </ul>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white text-center text-sm py-3 shadow-inner mt-4">
-        © {new Date().getFullYear()} SkillHub. Built with ❤️ by Krutik Naina.
-      </footer>
     </div>
   );
 };
+
+const Card = ({ title, value, color }) => (
+  <div
+    className={`bg-gradient-to-r ${color} text-white p-6 rounded-2xl shadow-md transform hover:scale-105 transition-transform duration-300`}
+  >
+    <h3 className="text-xl font-semibold">{title}</h3>
+    <p className="text-3xl font-bold mt-2">{value}</p>
+  </div>
+);
 
 export default Dashboard;

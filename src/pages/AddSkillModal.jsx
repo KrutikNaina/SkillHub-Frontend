@@ -10,24 +10,33 @@ const AddSkillModal = ({ isOpen, onClose, addStaticSkill }) => {
     description: '',
   })
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
-    // Use passed prop to add skill to static state
-    addStaticSkill(formData)
-    setFormData({
-      title: '',
-      coverImage: '',
-      startDate: '',
-      targetGoal: '',
-      description: '',
-    })
-    onClose()
-  }
+  const handleSubmit = async () => {
+    const skillData = {
+      userId: currentUserId, // 🔑 this must be defined
+      title,
+      description,
+      coverImage,
+      startDate,
+      targetGoal,
+    };
+  
+    try {
+      const response = await fetch('http://localhost:5000/api/skills/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(skillData),
+      });
+  
+      if (!response.ok) throw new Error('Failed to add skill');
+      const data = await response.json();
+      console.log('✅ Skill added:', data);
+    } catch (err) {
+      console.error('Error submitting skill:', err);
+    }
+  };
+    
 
   if (!isOpen) return null
 
