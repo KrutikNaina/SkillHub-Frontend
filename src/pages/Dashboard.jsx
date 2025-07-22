@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx
 import React from "react";
 import { Link } from "react-router-dom";
-import { LayoutDashboard, BookOpen, ListTodo, User } from "lucide-react";
+import { LayoutDashboard, BookOpen, ListTodo, User, Flame, Trophy } from "lucide-react";
 
 const Dashboard = () => {
   return (
@@ -51,7 +51,36 @@ const Dashboard = () => {
           <Card title="Progress Logs" value="21" color="from-blue-400 to-blue-600" />
         </div>
 
-        {/* Recent Activity or Section */}
+        {/* 🔥 Streak Tracker */}
+        <div className="mt-10 bg-white p-6 rounded-2xl shadow-md flex items-center gap-4">
+          <div className="text-5xl text-orange-500">🔥</div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">Current Streak</h3>
+            <p className="text-2xl font-bold text-purple-600">7 Days</p>
+            <p className="text-sm text-gray-500">Keep the fire alive! Log daily progress to maintain your streak.</p>
+          </div>
+        </div>
+
+        {/* 🏆 Achievements Grid */}
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-4 text-purple-700 flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-yellow-500" /> Unlocked Achievements
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {achievements.map((achieve) => (
+              <div
+                key={achieve.title}
+                className="bg-gradient-to-br from-white to-purple-50 p-4 rounded-xl shadow hover:shadow-lg transition-all"
+              >
+                <div className="text-3xl">{achieve.icon}</div>
+                <h4 className="mt-2 font-semibold text-gray-800">{achieve.title}</h4>
+                <p className="text-sm text-gray-500">{achieve.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent Logs */}
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4 text-purple-700">Recent Logs</h2>
           <ul className="bg-white rounded-xl p-6 shadow-md space-y-4">
@@ -73,5 +102,24 @@ const Card = ({ title, value, color }) => (
     <p className="text-3xl font-bold mt-2">{value}</p>
   </div>
 );
+
+// 🏆 Sample Achievements
+const achievements = [
+  {
+    title: "Skill Initiator",
+    icon: "🎯",
+    description: "Added your first skill to the repository",
+  },
+  {
+    title: "Daily Logger",
+    icon: "📅",
+    description: "Logged progress 5 days in a row",
+  },
+  {
+    title: "Milestone Maker",
+    icon: "🥇",
+    description: "Completed your first learning milestone",
+  },
+];
 
 export default Dashboard;
