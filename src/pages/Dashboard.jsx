@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { LayoutDashboard, BookOpen, ListTodo, User, Flame, Trophy } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  BookOpen,
+  ListTodo,
+  User,
+  Trophy,
+  LogOut,
+  Flame,
+} from "lucide-react";
 import axios from "axios";
 
 const Dashboard = () => {
@@ -12,8 +20,15 @@ const Dashboard = () => {
   });
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // ✅
 
-  // Fetch user profile and stats on mount
+  // ✅ Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       const token = localStorage.getItem("token");
@@ -24,24 +39,20 @@ const Dashboard = () => {
       }
 
       try {
-        // Fetch user profile
         const profileRes = await axios.get("http://localhost:5000/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         setProfile(profileRes.data);
 
-        // Fetch skill count
         const skillsRes = await axios.get("http://localhost:5000/api/skills/count", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Fetch milestones count
         const milestonesRes = await axios.get("http://localhost:5000/api/milestones/count", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Fetch progress logs count
         const logsRes = await axios.get("http://localhost:5000/api/logs/count", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -52,12 +63,11 @@ const Dashboard = () => {
           logsCount: logsRes.data.count || 0,
         });
 
-        // Fetch achievements (optional, adjust based on your API)
         const achievementsRes = await axios.get("http://localhost:5000/api/achievements", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setAchievements(achievementsRes.data || []);
 
+        setAchievements(achievementsRes.data || []);
       } catch (err) {
         console.error("Error loading dashboard data:", err);
       } finally {
@@ -73,10 +83,13 @@ const Dashboard = () => {
   }
 
   if (!profile) {
-    return <p className="text-center mt-10 text-red-500">Could not load profile. Please log in again.</p>;
+    return (
+      <p className="text-center mt-10 text-red-500">
+        Could not load profile. Please log in again.
+      </p>
+    );
   }
 
-  // If achievements from API is empty, fallback to default static achievements
   const defaultAchievements = [
     {
       title: "Skill Initiator",
@@ -100,34 +113,46 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-purple-100 to-pink-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-xl rounded-r-3xl p-6 hidden md:block">
-        <h2 className="text-2xl font-bold text-purple-700 mb-10">SkillHub</h2>
-        <nav className="flex flex-col gap-6 text-gray-700">
-          <Link to="/dashboard" className="flex items-center gap-3 hover:text-purple-600">
-            <LayoutDashboard className="w-5 h-5" />
-            Dashboard
-          </Link>
-          <Link to="/skill-repository" className="flex items-center gap-3 hover:text-purple-600">
-            <BookOpen className="w-5 h-5" />
-            Skills
-          </Link>
-          <Link to="/logs" className="flex items-center gap-3 hover:text-purple-600">
-            <ListTodo className="w-5 h-5" />
-            Progress Logs
-          </Link>
-          <Link to="/profile" className="flex items-center gap-3 hover:text-purple-600">
-            <User className="w-5 h-5" />
-            Profile
-          </Link>
-        </nav>
+      <aside className="w-64 bg-white shadow-xl rounded-r-3xl p-6 hidden md:flex flex-col justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-purple-700 mb-10">SkillHub</h2>
+          <nav className="flex flex-col gap-6 text-gray-700">
+            <Link to="/dashboard" className="flex items-center gap-3 hover:text-purple-600">
+              <LayoutDashboard className="w-5 h-5" />
+              Dashboard
+            </Link>
+            <Link to="/skill-repository" className="flex items-center gap-3 hover:text-purple-600">
+              <BookOpen className="w-5 h-5" />
+              Skills
+            </Link>
+            <Link to="/logs" className="flex items-center gap-3 hover:text-purple-600">
+              <ListTodo className="w-5 h-5" />
+              Progress Logs
+            </Link>
+            <Link to="/profile" className="flex items-center gap-3 hover:text-purple-600">
+              <User className="w-5 h-5" />
+              Profile
+            </Link>
+          </nav>
+        </div>
+
+        {/* 🚪 Logout button at bottom of sidebar */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 text-red-500 hover:text-red-600 mt-10"
+        >
+          <LogOut className="w-5 h-5" />
+          Logout
+        </button>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 p-6 md:p-10">
-        {/* Header */}
         <div className="flex justify-between items-center mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-purple-800">Welcome back, {profile.displayName || "User"}! 👋</h1>
+            <h1 className="text-3xl font-bold text-purple-800">
+              Welcome back, {profile.displayName || "User"}! 👋
+            </h1>
             <p className="text-sm text-gray-600 mt-1">Here’s your skill-building dashboard.</p>
           </div>
           <img
@@ -137,25 +162,21 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Dashboard Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card title="Skills Added" value={stats.skillsCount} color="from-purple-400 to-purple-600" />
           <Card title="Milestones Achieved" value={stats.milestonesCount} color="from-pink-400 to-pink-600" />
           <Card title="Progress Logs" value={stats.logsCount} color="from-blue-400 to-blue-600" />
         </div>
 
-        {/* 🔥 Streak Tracker */}
         <div className="mt-10 bg-white p-6 rounded-2xl shadow-md flex items-center gap-4">
           <div className="text-5xl text-orange-500">🔥</div>
           <div>
             <h3 className="text-lg font-semibold text-gray-800">Current Streak</h3>
-            {/* You can fetch and display this dynamically as well */}
             <p className="text-2xl font-bold text-purple-600">{profile.currentStreak || "0"} Days</p>
             <p className="text-sm text-gray-500">Keep the fire alive! Log daily progress to maintain your streak.</p>
           </div>
         </div>
 
-        {/* 🏆 Achievements Grid */}
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4 text-purple-700 flex items-center gap-2">
             <Trophy className="w-5 h-5 text-yellow-500" /> Unlocked Achievements
@@ -174,11 +195,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Logs */}
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4 text-purple-700">Recent Logs</h2>
           <ul className="bg-white rounded-xl p-6 shadow-md space-y-4">
-            {/* You can fetch recent logs from API as well, here is static fallback */}
             {profile.recentLogs && profile.recentLogs.length > 0 ? (
               profile.recentLogs.map((log, idx) => (
                 <li key={idx} className="border-b pb-2">
@@ -200,9 +219,7 @@ const Dashboard = () => {
 };
 
 const Card = ({ title, value, color }) => (
-  <div
-    className={`bg-gradient-to-r ${color} text-white p-6 rounded-2xl shadow-md transform hover:scale-105 transition-transform duration-300`}
-  >
+  <div className={`bg-gradient-to-r ${color} text-white p-6 rounded-2xl shadow-md transform hover:scale-105 transition-transform duration-300`}>
     <h3 className="text-xl font-semibold">{title}</h3>
     <p className="text-3xl font-bold mt-2">{value}</p>
   </div>
