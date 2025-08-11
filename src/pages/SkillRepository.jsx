@@ -9,15 +9,23 @@ const SkillRepository = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Fetch skills from MongoDB
+  // Fetch skills from backend on mount
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/skills')
-        setSkills(res.data.skills || [])
-        setLoading(false)
+        const token = localStorage.getItem('token')
+        if (!token) throw new Error('No token found')
+
+        const res = await axios.get('http://localhost:5000/api/skills', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        // Set the whole data array directly
+        setSkills(res.data || [])
       } catch (err) {
         setError('Failed to load skills.')
+        console.error(err)
+      } finally {
         setLoading(false)
       }
     }
@@ -25,9 +33,23 @@ const SkillRepository = () => {
     fetchSkills()
   }, [])
 
-  // Add new skill manually
-  const addStaticSkill = (skill) => {
-    setSkills((prevSkills) => [...prevSkills, skill])
+
+  // Add new skill by calling backend API and updating state
+  const addSkill = async (skillData) => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) throw new Error('No token found')
+
+      const res = await axios.post('http://localhost:5000/api/skills', skillData, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      // Update state with newly created skill from backend response
+      setSkills((prevSkills) => [...prevSkills, res.data.skill])
+    } catch (err) {
+      setError('Failed to add skill.')
+      console.error(err)
+    }
   }
 
   return (
@@ -50,9 +72,9 @@ const SkillRepository = () => {
         <p className="text-gray-600 dark:text-gray-400">No skills found.</p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {skills.map((skill, index) => (
+          {skills.map((skill) => (
             <div
-              key={index}
+              key={skill._id}
               className="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 shadow hover:shadow-lg transition"
             >
               {skill.coverImage && (
@@ -62,7 +84,7 @@ const SkillRepository = () => {
                 <h3 className="text-xl font-semibold">{skill.title}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{skill.description}</p>
                 <div className="text-xs mt-3 text-gray-600 dark:text-gray-400">
-                  🎯 {skill.targetGoal} • 📅 {skill.startDate}
+                  🎯 {skill.targetGoal} • 📅 {new Date(skill.startDate).toLocaleDateString()}
                 </div>
               </div>
             </div>
@@ -73,7 +95,7 @@ const SkillRepository = () => {
       <AddSkillModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        addStaticSkill={addStaticSkill}
+        addSkill={addSkill}  // Pass the addSkill function here
       />
     </section>
   )

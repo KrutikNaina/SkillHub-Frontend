@@ -28,3 +28,8 @@ html {
 }
 
 
+/* Remove caret and outline on all elements */
+* {
+  outline: none !important;
+  caret-color: transparent !important;
+}

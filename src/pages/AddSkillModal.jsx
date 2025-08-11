@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 
-const AddSkillModal = ({ isOpen, onClose, addStaticSkill, currentUserId }) => {
+const AddSkillModal = ({ isOpen, onClose, addStaticSkill }) => {
   const [formData, setFormData] = useState({
     title: '',
     coverImage: '',
@@ -18,35 +18,42 @@ const AddSkillModal = ({ isOpen, onClose, addStaticSkill, currentUserId }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // prevent page refresh
-
-    const skillData = {
-      userId: currentUserId, // 🔑 Must be passed as prop or from context
-      ...formData,
-    };
+    e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/skills/create', {
+      const token = localStorage.getItem('token'); // 📌 must be saved on login
+      if (!token) {
+        alert('No token found. Please log in.');
+        return;
+      }
+
+      const response = await fetch('http://localhost:5000/api/skills/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // ✅ send JWT
         },
-        body: JSON.stringify(skillData),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) throw new Error('Failed to add skill');
+
       const data = await response.json();
       console.log('✅ Skill added:', data);
 
-      if (addStaticSkill) addStaticSkill(data); // update frontend list
+      // ✅ Add new skill to state in parent
+      if (addStaticSkill) addStaticSkill(data.skill);
+
+      // Reset form
       setFormData({
         title: '',
         coverImage: '',
         startDate: '',
         targetGoal: '',
         description: '',
-      }); // reset form
-      onClose(); // close modal
+      });
+
+      onClose();
     } catch (err) {
       console.error('Error submitting skill:', err);
     }
@@ -117,7 +124,7 @@ const AddSkillModal = ({ isOpen, onClose, addStaticSkill, currentUserId }) => {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            ➕ Update Skill
+            ➕ Add Skill
           </button>
         </form>
       </div>

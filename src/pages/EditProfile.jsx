@@ -1,60 +1,97 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Github, Linkedin, Twitter, UploadCloud } from 'lucide-react'
-import avatarDefault from '../assets/krutik-naina.jpg'
 import axios from 'axios'
 
 const EditProfile = () => {
-  const [avatar, setAvatar] = useState(avatarDefault)
+  const [avatar, setAvatar] = useState('')
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
   const [github, setGithub] = useState('')
   const [linkedin, setLinkedin] = useState('')
   const [twitter, setTwitter] = useState('')
   const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(true)
 
+  // ✅ Fetch current profile data when page loads
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          setMessage('No token found — please log in again')
+          return
+        }
+
+        const res = await axios.get('http://localhost:5000/api/users/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+
+        const user = res.data
+        setName(user.displayName || '')
+        setBio(user.bio || '')
+        setGithub(user.github || '')
+        setLinkedin(user.linkedin || '')
+        setTwitter(user.twitter || '')
+        setAvatar(user.avatar || '')
+      } catch (err) {
+        console.error(err)
+        setMessage('❌ Failed to load profile')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProfile()
+  }, [])
+
+  // ✅ Handle avatar preview before uploading
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (file) {
       const reader = new FileReader()
-      reader.onloadend = () => {
-        setAvatar(reader.result)
-      }
+      reader.onloadend = () => setAvatar(reader.result)
       reader.readAsDataURL(file)
     }
   }
 
+  // ✅ Submit updated data to backend
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     try {
-      const userId = localStorage.getItem('userId') || '64fe1b8c49d98d7237c305e6' // fallback example
+      const token = localStorage.getItem('token')
+      if (!token) {
+        setMessage('No token found — please log in again')
+        return
+      }
 
-      const res = await axios.post(
-        'http://localhost:5000/api/profile/create',
+      const res = await axios.put(
+        'http://localhost:5000/api/users/me',
         {
-          userId,
-          fullName: name,
+          name,
           bio,
           avatar,
           github,
           linkedin,
-          twitter,
+          twitter
         },
         {
           headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true,
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
       )
-      
 
-      setMessage('✅ Profile created successfully!')
+      setMessage('✅ Profile updated successfully!')
       console.log(res.data)
     } catch (err) {
       console.error(err)
-      setMessage('❌ Failed to create profile')
+      setMessage('❌ Failed to update profile')
     }
+  }
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading...</p>
   }
 
   return (
@@ -63,7 +100,11 @@ const EditProfile = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Your Profile</h2>
 
         <div className="flex flex-col items-center gap-4 mb-8">
-          <img src={avatar} alt="Avatar" className="w-28 h-28 rounded-full shadow" />
+          <img
+            src={avatar || '/default-avatar.png'}
+            alt="Avatar"
+            className="w-28 h-28 rounded-full shadow object-cover"
+          />
           <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
             <UploadCloud className="w-5 h-5" />
             Change Avatar
@@ -100,9 +141,7 @@ const EditProfile = () => {
           />
 
           {message && (
-            <div className="text-center mt-4 text-sm font-medium">
-              {message}
-            </div>
+            <div className="text-center mt-4 text-sm font-medium">{message}</div>
           )}
 
           <div className="flex justify-end gap-4 mt-6">
@@ -126,6 +165,7 @@ const EditProfile = () => {
   )
 }
 
+// 📦 Input component
 const Input = ({ label, icon, ...props }) => (
   <div>
     <label className="block text-sm font-medium mb-1">{label}</label>
@@ -139,6 +179,7 @@ const Input = ({ label, icon, ...props }) => (
   </div>
 )
 
+// 📦 Textarea component
 const TextArea = ({ label, ...props }) => (
   <div>
     <label className="block text-sm font-medium mb-1">{label}</label>

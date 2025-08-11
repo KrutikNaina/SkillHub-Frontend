@@ -1,9 +1,102 @@
-// src/pages/Dashboard.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { LayoutDashboard, BookOpen, ListTodo, User, Flame, Trophy } from "lucide-react";
+import axios from "axios";
 
 const Dashboard = () => {
+  const [profile, setProfile] = useState(null);
+  const [stats, setStats] = useState({
+    skillsCount: 0,
+    milestonesCount: 0,
+    logsCount: 0,
+  });
+  const [achievements, setAchievements] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch user profile and stats on mount
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch user profile
+        const profileRes = await axios.get("http://localhost:5000/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setProfile(profileRes.data);
+
+        // Fetch skill count
+        const skillsRes = await axios.get("http://localhost:5000/api/skills/count", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Fetch milestones count
+        const milestonesRes = await axios.get("http://localhost:5000/api/milestones/count", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Fetch progress logs count
+        const logsRes = await axios.get("http://localhost:5000/api/logs/count", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setStats({
+          skillsCount: skillsRes.data.count || 0,
+          milestonesCount: milestonesRes.data.count || 0,
+          logsCount: logsRes.data.count || 0,
+        });
+
+        // Fetch achievements (optional, adjust based on your API)
+        const achievementsRes = await axios.get("http://localhost:5000/api/achievements", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAchievements(achievementsRes.data || []);
+
+      } catch (err) {
+        console.error("Error loading dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading dashboard...</p>;
+  }
+
+  if (!profile) {
+    return <p className="text-center mt-10 text-red-500">Could not load profile. Please log in again.</p>;
+  }
+
+  // If achievements from API is empty, fallback to default static achievements
+  const defaultAchievements = [
+    {
+      title: "Skill Initiator",
+      icon: "🎯",
+      description: "Added your first skill to the repository",
+    },
+    {
+      title: "Daily Logger",
+      icon: "📅",
+      description: "Logged progress 5 days in a row",
+    },
+    {
+      title: "Milestone Maker",
+      icon: "🥇",
+      description: "Completed your first learning milestone",
+    },
+  ];
+
+  const displayAchievements = achievements.length > 0 ? achievements : defaultAchievements;
+
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-purple-100 to-pink-100">
       {/* Sidebar */}
@@ -34,11 +127,11 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-purple-800">Welcome back, Krutik! 👋</h1>
+            <h1 className="text-3xl font-bold text-purple-800">Welcome back, {profile.displayName || "User"}! 👋</h1>
             <p className="text-sm text-gray-600 mt-1">Here’s your skill-building dashboard.</p>
           </div>
           <img
-            src="https://api.dicebear.com/7.x/identicon/svg?seed=krutik"
+            src={profile.avatar || "https://api.dicebear.com/7.x/identicon/svg?seed=default"}
             alt="avatar"
             className="w-10 h-10 rounded-full border-2 border-purple-400 shadow-sm"
           />
@@ -46,9 +139,9 @@ const Dashboard = () => {
 
         {/* Dashboard Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card title="Skills Added" value="12" color="from-purple-400 to-purple-600" />
-          <Card title="Milestones Achieved" value="5" color="from-pink-400 to-pink-600" />
-          <Card title="Progress Logs" value="21" color="from-blue-400 to-blue-600" />
+          <Card title="Skills Added" value={stats.skillsCount} color="from-purple-400 to-purple-600" />
+          <Card title="Milestones Achieved" value={stats.milestonesCount} color="from-pink-400 to-pink-600" />
+          <Card title="Progress Logs" value={stats.logsCount} color="from-blue-400 to-blue-600" />
         </div>
 
         {/* 🔥 Streak Tracker */}
@@ -56,7 +149,8 @@ const Dashboard = () => {
           <div className="text-5xl text-orange-500">🔥</div>
           <div>
             <h3 className="text-lg font-semibold text-gray-800">Current Streak</h3>
-            <p className="text-2xl font-bold text-purple-600">7 Days</p>
+            {/* You can fetch and display this dynamically as well */}
+            <p className="text-2xl font-bold text-purple-600">{profile.currentStreak || "0"} Days</p>
             <p className="text-sm text-gray-500">Keep the fire alive! Log daily progress to maintain your streak.</p>
           </div>
         </div>
@@ -67,7 +161,7 @@ const Dashboard = () => {
             <Trophy className="w-5 h-5 text-yellow-500" /> Unlocked Achievements
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {achievements.map((achieve) => (
+            {displayAchievements.map((achieve) => (
               <div
                 key={achieve.title}
                 className="bg-gradient-to-br from-white to-purple-50 p-4 rounded-xl shadow hover:shadow-lg transition-all"
@@ -84,9 +178,20 @@ const Dashboard = () => {
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4 text-purple-700">Recent Logs</h2>
           <ul className="bg-white rounded-xl p-6 shadow-md space-y-4">
-            <li className="border-b pb-2">✔️ Learned React Props – 2 days ago</li>
-            <li className="border-b pb-2">✔️ Logged a new JavaScript project – 4 days ago</li>
-            <li>✔️ Achieved ‘Git Basics’ milestone – 6 days ago</li>
+            {/* You can fetch recent logs from API as well, here is static fallback */}
+            {profile.recentLogs && profile.recentLogs.length > 0 ? (
+              profile.recentLogs.map((log, idx) => (
+                <li key={idx} className="border-b pb-2">
+                  ✔️ {log.description} – {log.timeAgo}
+                </li>
+              ))
+            ) : (
+              <>
+                <li className="border-b pb-2">✔️ Learned React Props – 2 days ago</li>
+                <li className="border-b pb-2">✔️ Logged a new JavaScript project – 4 days ago</li>
+                <li>✔️ Achieved ‘Git Basics’ milestone – 6 days ago</li>
+              </>
+            )}
           </ul>
         </div>
       </main>
@@ -102,24 +207,5 @@ const Card = ({ title, value, color }) => (
     <p className="text-3xl font-bold mt-2">{value}</p>
   </div>
 );
-
-// 🏆 Sample Achievements
-const achievements = [
-  {
-    title: "Skill Initiator",
-    icon: "🎯",
-    description: "Added your first skill to the repository",
-  },
-  {
-    title: "Daily Logger",
-    icon: "📅",
-    description: "Logged progress 5 days in a row",
-  },
-  {
-    title: "Milestone Maker",
-    icon: "🥇",
-    description: "Completed your first learning milestone",
-  },
-];
 
 export default Dashboard;
