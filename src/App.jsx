@@ -28,7 +28,7 @@ function AppWrapper() {
   const location = useLocation()
 
   // All dashboard-related paths (that use their own layout/header)
-  const isCustomDashboardLayout = /^\/(dashboard|profile|logs|repository|milestones|skill-repository|edit-profile|add-skillModal)/.test(
+  const isCustomDashboardLayout = /^\/(dashboard|profile|progress-log|repository|milestones|skill-repository|edit-profile|add-skillModal)/.test(
     location.pathname
   )
 
@@ -60,7 +60,7 @@ function AppWrapper() {
         {/* Dashboard Pages with their own layout/header */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/logs" element={<ProgressLog />} />
+        <Route path="/progress-log" element={<ProgressLog />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/milestones" element={<Milestones />} />
         <Route path="/skill-repository" element={<SkillRepository />} />

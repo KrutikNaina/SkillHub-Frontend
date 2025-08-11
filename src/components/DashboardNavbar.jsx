@@ -26,7 +26,7 @@ const DashboardNavbar = () => {
           {isLoggedIn && (
             <>
               <Link to="/profile" className={isActive('/profile')}>Profile</Link>
-              <Link to="/logs" className={isActive('/logs')}>Progress Log</Link>
+              <Link to="/progress-log" className={isActive('/logs')}>Progress Log</Link>
               <Link to="/skill-repository" className={isActive('/skill-repository')}>Repository</Link>
               <Link to="/milestones" className={isActive('/milestones')}>Milestones</Link>
             </>
