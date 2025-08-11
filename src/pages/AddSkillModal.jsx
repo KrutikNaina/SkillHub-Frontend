@@ -1,25 +1,30 @@
-import { useState } from 'react'
-import { X } from 'lucide-react'
+import { useState } from 'react';
+import { X } from 'lucide-react';
 
-const AddSkillModal = ({ isOpen, onClose, addStaticSkill }) => {
+const AddSkillModal = ({ isOpen, onClose, addStaticSkill, currentUserId }) => {
   const [formData, setFormData] = useState({
     title: '',
     coverImage: '',
     startDate: '',
     targetGoal: '',
     description: '',
-  })
+  });
 
-  const handleSubmit = async () => {
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // prevent page refresh
+
     const skillData = {
-      userId: currentUserId, // 🔑 this must be defined
-      title,
-      description,
-      coverImage,
-      startDate,
-      targetGoal,
+      userId: currentUserId, // 🔑 Must be passed as prop or from context
+      ...formData,
     };
-  
+
     try {
       const response = await fetch('http://localhost:5000/api/skills/create', {
         method: 'POST',
@@ -28,17 +33,26 @@ const AddSkillModal = ({ isOpen, onClose, addStaticSkill }) => {
         },
         body: JSON.stringify(skillData),
       });
-  
+
       if (!response.ok) throw new Error('Failed to add skill');
       const data = await response.json();
       console.log('✅ Skill added:', data);
+
+      if (addStaticSkill) addStaticSkill(data); // update frontend list
+      setFormData({
+        title: '',
+        coverImage: '',
+        startDate: '',
+        targetGoal: '',
+        description: '',
+      }); // reset form
+      onClose(); // close modal
     } catch (err) {
       console.error('Error submitting skill:', err);
     }
   };
-    
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
@@ -103,12 +117,12 @@ const AddSkillModal = ({ isOpen, onClose, addStaticSkill }) => {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            ➕ Add Skill
+            ➕ Update Skill
           </button>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AddSkillModal
+export default AddSkillModal;
