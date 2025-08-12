@@ -125,7 +125,7 @@ const Dashboard = () => {
               <BookOpen className="w-5 h-5" />
               Skills
             </Link>
-            <Link to="/logs" className="flex items-center gap-3 hover:text-purple-600">
+            <Link to="/progress-log" className="flex items-center gap-3 hover:text-purple-600">
               <ListTodo className="w-5 h-5" />
               Progress Logs
             </Link>
