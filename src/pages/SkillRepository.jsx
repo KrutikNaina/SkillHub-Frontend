@@ -11,34 +11,6 @@ const SkillRepository = () => {
   const [error, setError] = useState(null);
 
   // Fetch skills from backend on mount
-<<<<<<< HEAD
-// ... your existing code
-
-useEffect(() => {
-  const fetchSkills = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token found');
-
-      const res = await axios.get('http://localhost:5000/api/skills', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Assume backend filters by userId
-      setSkills(res.data || []);
-    } catch (err) {
-      setError('Failed to load skills.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchSkills();
-}, []);
-
-// ...
-=======
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -58,7 +30,6 @@ useEffect(() => {
         setLoading(false);
       }
     };
->>>>>>> KalpeshDev
 
     fetchSkills();
   }, []);

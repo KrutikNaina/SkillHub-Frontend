@@ -113,28 +113,6 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-purple-100 to-pink-100">
       {/* Sidebar */}
-<<<<<<< HEAD
-      <aside className="w-64 bg-white shadow-xl rounded-r-3xl p-6 hidden md:block">
-        <h2 className="text-2xl font-bold text-purple-700 mb-10">SkillHub</h2>
-        <nav className="flex flex-col gap-6 text-gray-700">
-          <Link to="/dashboard" className="flex items-center gap-3 hover:text-purple-600">
-            <LayoutDashboard className="w-5 h-5" />
-            Dashboard
-          </Link>
-          <Link to="/skill-repository" className="flex items-center gap-3 hover:text-purple-600">
-            <BookOpen className="w-5 h-5" />
-            Skills
-          </Link>
-          <Link to="/progress-log" className="flex items-center gap-3 hover:text-purple-600">
-            <ListTodo className="w-5 h-5" />
-            Progress Logs
-          </Link>
-          <Link to="/profile" className="flex items-center gap-3 hover:text-purple-600">
-            <User className="w-5 h-5" />
-            Profile
-          </Link>
-        </nav>
-=======
       <aside className="w-64 bg-white shadow-xl rounded-r-3xl p-6 hidden md:flex flex-col justify-between">
         <div>
           <h2 className="text-2xl font-bold text-purple-700 mb-10">SkillHub</h2>
@@ -166,7 +144,6 @@ const Dashboard = () => {
           <LogOut className="w-5 h-5" />
           Logout
         </button>
->>>>>>> KalpeshDev
       </aside>
 
       {/* Main Content */}
