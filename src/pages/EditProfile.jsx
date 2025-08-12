@@ -1,67 +1,71 @@
-import { useState, useEffect } from 'react'
-import { Github, Linkedin, Twitter, UploadCloud } from 'lucide-react'
-import axios from 'axios'
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Github, Linkedin, Twitter, UploadCloud } from 'lucide-react';
+import axios from 'axios';
+import DashboardNavbar from '../components/DashboardNavbar';
 
 const EditProfile = () => {
-  const [avatar, setAvatar] = useState('')
-  const [name, setName] = useState('')
-  const [bio, setBio] = useState('')
-  const [github, setGithub] = useState('')
-  const [linkedin, setLinkedin] = useState('')
-  const [twitter, setTwitter] = useState('')
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [avatar, setAvatar] = useState('');
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
+  const [github, setGithub] = useState('');
+  const [linkedin, setLinkedin] = useState('');
+  const [twitter, setTwitter] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate(); // ✅ Initialize navigation
 
   // ✅ Fetch current profile data when page loads
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('token');
         if (!token) {
-          setMessage('No token found — please log in again')
-          return
+          setMessage('No token found — please log in again');
+          return;
         }
 
         const res = await axios.get('http://localhost:5000/api/users/me', {
           headers: { Authorization: `Bearer ${token}` }
-        })
+        });
 
-        const user = res.data
-        setName(user.displayName || '')
-        setBio(user.bio || '')
-        setGithub(user.github || '')
-        setLinkedin(user.linkedin || '')
-        setTwitter(user.twitter || '')
-        setAvatar(user.avatar || '')
+        const user = res.data;
+        setName(user.displayName || '');
+        setBio(user.bio || '');
+        setGithub(user.github || '');
+        setLinkedin(user.linkedin || '');
+        setTwitter(user.twitter || '');
+        setAvatar(user.avatar || '');
       } catch (err) {
-        console.error(err)
-        setMessage('❌ Failed to load profile')
+        console.error(err);
+        setMessage('❌ Failed to load profile');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProfile()
-  }, [])
+    fetchProfile();
+  }, []);
 
   // ✅ Handle avatar preview before uploading
   const handleImageChange = (e) => {
-    const file = e.target.files[0]
+    const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => setAvatar(reader.result)
-      reader.readAsDataURL(file)
+      const reader = new FileReader();
+      reader.onloadend = () => setAvatar(reader.result);
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   // ✅ Submit updated data to backend
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('token');
       if (!token) {
-        setMessage('No token found — please log in again')
-        return
+        setMessage('No token found — please log in again');
+        return;
       }
 
       const res = await axios.put(
@@ -80,92 +84,95 @@ const EditProfile = () => {
             'Content-Type': 'application/json'
           }
         }
-      )
+      );
 
-      setMessage('✅ Profile updated successfully!')
-      console.log(res.data)
+      setMessage('✅ Profile updated successfully!');
+      console.log(res.data);
     } catch (err) {
-      console.error(err)
-      setMessage('❌ Failed to update profile')
+      console.error(err);
+      setMessage('❌ Failed to update profile');
     }
-  }
+  };
 
   if (loading) {
-    return <p className="text-center mt-10">Loading...</p>
+    return <p className="text-center mt-10">Loading...</p>;
   }
 
   return (
-    <section className="w-full min-h-screen px-6 py-24 bg-[#f4f6fa] dark:bg-gray-900 text-gray-900 dark:text-white">
-      <div className="max-w-3xl mx-auto bg-gray-100 dark:bg-gray-800 p-8 rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Edit Your Profile</h2>
+    <>
+      <DashboardNavbar />
+      <section className="w-full min-h-screen px-6 py-24 bg-[#f4f6fa] dark:bg-gray-900 text-gray-900 dark:text-white">
+        <div className="max-w-3xl mx-auto bg-gray-100 dark:bg-gray-800 p-8 rounded-xl shadow-md">
+          <h2 className="text-2xl font-bold mb-6 text-center">Edit Your Profile</h2>
 
-        <div className="flex flex-col items-center gap-4 mb-8">
-          <img
-            src={avatar || '/default-avatar.png'}
-            alt="Avatar"
-            className="w-28 h-28 rounded-full shadow object-cover"
-          />
-          <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            <UploadCloud className="w-5 h-5" />
-            Change Avatar
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageChange}
+          <div className="flex flex-col items-center gap-4 mb-8">
+            <img
+              src={avatar || '/default-avatar.png'}
+              alt="Avatar"
+              className="w-28 h-28 rounded-full shadow object-cover"
             />
-          </label>
-        </div>
-
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          <Input label="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <TextArea label="Bio" value={bio} onChange={(e) => setBio(e.target.value)} />
-
-          <Input
-            label="GitHub"
-            icon={<Github className="w-4 h-4 text-gray-500" />}
-            value={github}
-            onChange={(e) => setGithub(e.target.value)}
-          />
-          <Input
-            label="LinkedIn"
-            icon={<Linkedin className="w-4 h-4 text-gray-500" />}
-            value={linkedin}
-            onChange={(e) => setLinkedin(e.target.value)}
-          />
-          <Input
-            label="Twitter"
-            icon={<Twitter className="w-4 h-4 text-gray-500" />}
-            value={twitter}
-            onChange={(e) => setTwitter(e.target.value)}
-          />
-
-          {message && (
-            <div className="text-center mt-4 text-sm font-medium">{message}</div>
-          )}
-
-          <div className="flex justify-end gap-4 mt-6">
-            <button
-              type="button"
-              className="px-5 py-2 rounded-lg bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white"
-              onClick={() => window.location.reload()}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-            >
-              Save Changes
-            </button>
+            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              <UploadCloud className="w-5 h-5" />
+              Change Avatar
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </label>
           </div>
-        </form>
-      </div>
-    </section>
-  )
-}
 
-// 📦 Input component
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <Input label="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
+            <TextArea label="Bio" value={bio} onChange={(e) => setBio(e.target.value)} />
+
+            <Input
+              label="GitHub"
+              icon={<Github className="w-4 h-4 text-gray-500" />}
+              value={github}
+              onChange={(e) => setGithub(e.target.value)}
+            />
+            <Input
+              label="LinkedIn"
+              icon={<Linkedin className="w-4 h-4 text-gray-500" />}
+              value={linkedin}
+              onChange={(e) => setLinkedin(e.target.value)}
+            />
+            <Input
+              label="Twitter"
+              icon={<Twitter className="w-4 h-4 text-gray-500" />}
+              value={twitter}
+              onChange={(e) => setTwitter(e.target.value)}
+            />
+
+            {message && (
+              <div className="text-center mt-4 text-sm font-medium">{message}</div>
+            )}
+
+            <div className="flex justify-end gap-4 mt-6">
+              <button
+                type="button"
+                className="px-5 py-2 rounded-lg bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white"
+                onClick={() => navigate('/profile')} // ✅ Redirect to profile
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </>
+  );
+};
+
+// 📦 Reusable Input component
 const Input = ({ label, icon, ...props }) => (
   <div>
     <label className="block text-sm font-medium mb-1">{label}</label>
@@ -177,9 +184,9 @@ const Input = ({ label, icon, ...props }) => (
       />
     </div>
   </div>
-)
+);
 
-// 📦 Textarea component
+// 📦 Reusable TextArea component
 const TextArea = ({ label, ...props }) => (
   <div>
     <label className="block text-sm font-medium mb-1">{label}</label>
@@ -189,6 +196,6 @@ const TextArea = ({ label, ...props }) => (
       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 outline-none text-sm text-gray-900 dark:text-white"
     />
   </div>
-)
+);
 
-export default EditProfile
+export default EditProfile;

@@ -10,6 +10,7 @@ const Milestones = () => {
 
   return (
     <>
+    <DashboardNavbar/>
       <section className="w-full min-h-screen px-6 py-24 bg-[#f4f6fa] dark:bg-gray-900 text-gray-900 dark:text-white">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold mb-6 text-center">

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import DashboardNavbar from "../components/DashboardNavbar";
+<<<<<<< HEAD
 import { Image, Video, CalendarDays, Plus } from "lucide-react";
 import AddProgressLogModal from "../pages/AddProgressLogModal"; // Adjust path if needed
+=======
+import { Image, Video, CalendarDays } from "lucide-react";
+>>>>>>> KalpeshDev
 
 const ProgressLog = () => {
   const [logs, setLogs] = useState([
@@ -11,23 +15,34 @@ const ProgressLog = () => {
       skill: "React",
       text: "Built reusable components and integrated Tailwind.\n\n🚀 Also added dark mode toggle!",
       image: "https://via.placeholder.com/300x180",
+<<<<<<< HEAD
       completionPercent: 70,
+=======
+>>>>>>> KalpeshDev
     },
     {
       id: 2,
       date: "2025-06-29",
       skill: "MongoDB",
       text: "Learned about aggregation pipelines and indexes.",
+<<<<<<< HEAD
       video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
       completionPercent: 40,
     },
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+=======
+      video:
+        "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+    },
+  ]);
+>>>>>>> KalpeshDev
 
   useEffect(() => {
     document.title = "Progress Log | SkillHub";
   }, []);
+<<<<<<< HEAD
 
   const handleAddLog = (newLog) => {
     setLogs((prev) => [
@@ -36,9 +51,12 @@ const ProgressLog = () => {
     ]);
     setIsModalOpen(false);
   };
+=======
+>>>>>>> KalpeshDev
 
   return (
     <>
+      <DashboardNavbar />
       <section className="w-full min-h-screen px-6 py-24 bg-[#f4f6fa] dark:bg-gray-900 text-gray-900 dark:text-white">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
@@ -77,7 +95,11 @@ const LogCard = ({ log }) => {
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-blue-600">{log.skill}</span>
         <span className="text-sm text-gray-600 dark:text-gray-400">
+<<<<<<< HEAD
           {new Date(log.date).toLocaleDateString()}
+=======
+          {log.date}
+>>>>>>> KalpeshDev
         </span>
       </div>
 
