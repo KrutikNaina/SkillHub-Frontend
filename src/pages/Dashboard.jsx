@@ -7,7 +7,6 @@ import {
   User,
   Trophy,
   LogOut,
-  Flame,
 } from "lucide-react";
 import axios from "axios";
 
@@ -20,9 +19,8 @@ const Dashboard = () => {
   });
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // ✅
+  const navigate = useNavigate();
 
-  // ✅ Logout function
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -42,17 +40,14 @@ const Dashboard = () => {
         const profileRes = await axios.get("http://localhost:5000/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         setProfile(profileRes.data);
 
         const skillsRes = await axios.get("http://localhost:5000/api/skills/count", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         const milestonesRes = await axios.get("http://localhost:5000/api/milestones/count", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         const logsRes = await axios.get("http://localhost:5000/api/logs/count", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -66,7 +61,6 @@ const Dashboard = () => {
         const achievementsRes = await axios.get("http://localhost:5000/api/achievements", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         setAchievements(achievementsRes.data || []);
       } catch (err) {
         console.error("Error loading dashboard data:", err);
@@ -111,9 +105,9 @@ const Dashboard = () => {
   const displayAchievements = achievements.length > 0 ? achievements : defaultAchievements;
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-purple-100 to-pink-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-xl rounded-r-3xl p-6 hidden md:flex flex-col justify-between">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 flex">
+      {/* Sidebar - Fixed */}
+      <aside className="fixed top-0 left-0 w-64 h-screen bg-white shadow-xl rounded-r-3xl p-6 flex flex-col justify-between">
         <div>
           <h2 className="text-2xl font-bold text-purple-700 mb-10">SkillHub</h2>
           <nav className="flex flex-col gap-6 text-gray-700">
@@ -136,7 +130,7 @@ const Dashboard = () => {
           </nav>
         </div>
 
-        {/* 🚪 Logout button at bottom of sidebar */}
+        {/* Logout button */}
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 text-red-500 hover:text-red-600 mt-10"
@@ -147,7 +141,7 @@ const Dashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-10">
+      <main className="flex-1 p-6 md:p-10 ml-64">
         <div className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-3xl font-bold text-purple-800">
