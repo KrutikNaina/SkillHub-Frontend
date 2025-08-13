@@ -11,7 +11,7 @@ const Hero = () => {
         <div className="w-full lg:w-1/2">
           <h1 className="text-4xl md:text-4.9xl font-bold leading-snug text-gray-900 dark:text-white">
             Connect with learners across <br className="hidden md:block" />
-            <span className="text-blue-600">SkillHub</span>
+            <span className="text-blue-600">Skill-Hub</span>
           </h1>
 
           <p className="mt-6 text-lg text-gray-700 dark:text-gray-300">
