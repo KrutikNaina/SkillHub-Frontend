@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom"; // ✅ Import Link
+
 const CTA = () => {
   return (
-    <section className="w-full bg-[#f4f6fa] dark:bg-gray-900 px-4 sm:px-6 lg:px-20 mb-16 py-8  border-gray-300 dark:border-gray-700">
+    <section className="w-full bg-[#f4f6fa] dark:bg-gray-900 px-4 sm:px-6 lg:px-20 mb-16 py-8 border-gray-300 dark:border-gray-700">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         {/* LEFT TEXT */}
         <div className="text-center md:text-left">
@@ -13,14 +15,15 @@ const CTA = () => {
         </div>
 
         {/* CTA BUTTON */}
-        <a
+        <Link
+          to="/login"  // ✅ Route to login
           className="inline-block bg-blue-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-700 transition"
         >
           🚀 Join SkillHub Now
-        </a>
+        </Link>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default CTA
+export default CTA;

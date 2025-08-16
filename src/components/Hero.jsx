@@ -1,9 +1,11 @@
 import { Typewriter } from 'react-simple-typewriter'
 import heroImage from '../assets/app-launch.svg'
 import { motion } from 'framer-motion'
-
+import { useNavigate } from 'react-router-dom' // ✅ Import useNavigate
 
 const Hero = () => {
+  const navigate = useNavigate() // ✅ init navigate
+
   return (
     <section className="w-full min-h-screen pt-24 flex items-center justify-center bg-[#f4f6fa] dark:bg-gray-900 px-4 sm:px-6 lg:px-20">
       <div className="w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-10">
@@ -33,7 +35,11 @@ const Hero = () => {
             </span>
           </h2>
 
-          <button className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
+          {/* CTA BUTTON with login route */}
+          <button
+            onClick={() => navigate('/login')} // ✅ Redirect to /login
+            className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+          >
             🚀 Start Learning Now
           </button>
         </div>
@@ -52,11 +58,10 @@ const Hero = () => {
             }}
           />
         </div>
-
-
       </div>
     </section>
   )
 }
 
 export default Hero
+  

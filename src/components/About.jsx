@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom' // ✅ Import useNavigate
 import aboutImage1 from '../assets/engineer.svg'
 import aboutImage2 from '../assets/genius.svg'
 
 const About = () => {
   const images = [aboutImage1, aboutImage2]
   const [currentImage, setCurrentImage] = useState(0)
+  const navigate = useNavigate() // ✅ initialize navigation
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,7 +43,12 @@ const About = () => {
             <li>🌟 Build a public skill profile like GitHub, but for growth</li>
             <li>🧠 Learn with accountability and progress streaks</li>
           </ul>
-          <button className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
+
+          {/* CTA BUTTON with login route */}
+          <button
+            onClick={() => navigate('/login')} // ✅ Route to /login
+            className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+          >
             🔍 Explore Skills
           </button>
         </div>
