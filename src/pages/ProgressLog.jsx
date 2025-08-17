@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import AddProgressLogModal from './AddProgressLogModal' // adjust path as needed
 import { CalendarDays } from 'lucide-react'
+import DashboardNavbar from '../components/DashboardNavbar'
+
 
 const ProgressLog = ({ token }) => {
   const [logs, setLogs] = useState([])
