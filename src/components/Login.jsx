@@ -19,7 +19,6 @@ const Login = () => {
         if (token) {
           localStorage.setItem('token', token);
 
-          // ✅ Decode user info (optional)
           const payload = JSON.parse(atob(token.split('.')[1]));
           setUser(payload);
 
@@ -36,22 +35,25 @@ const Login = () => {
     return () => window.removeEventListener('message', listener);
   }, [navigate]);
 
-  const handleGoogleLogin = () => {
+  const openPopup = (url, provider) => {
     const width = 500;
     const height = 600;
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
 
     window.open(
-      'http://localhost:5000/auth/google',
-      'GoogleAuth',
+      url,
+      `${provider}Auth`,
       `width=${width},height=${height},left=${left},top=${top}`
     );
   };
 
-  const handleClick = (provider) => {
-    setWarning(`${provider} login coming soon!`);
-    setTimeout(() => setWarning(''), 3000);
+  const handleGoogleLogin = () => {
+    openPopup('http://localhost:5000/auth/google', 'Google');
+  };
+
+  const handleGithubLogin = () => {
+    openPopup('http://localhost:5000/auth/github', 'GitHub');
   };
 
   return (
@@ -73,7 +75,7 @@ const Login = () => {
         </button>
 
         <button
-          onClick={() => handleClick('GitHub')}
+          onClick={handleGithubLogin}
           className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition"
         >
           <Github className="w-5 h-5" />
