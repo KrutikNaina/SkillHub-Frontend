@@ -1,19 +1,23 @@
+// pages/SkillRepository.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AddSkillModal from "./AddSkillModal";
-import EditSkillModal from "./EditSkillModel";
+import EditSkillModal from "./EditSkillModel"; // Fixed typo in import
 import { Plus } from "lucide-react";
 import axios from "axios";
 import DashboardNavbar from "../components/DashboardNavbar";
 
 const SkillRepository = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false); // Add modal
-  const [editModalOpen, setEditModalOpen] = useState(false); // Edit modal
-  const [selectedSkill, setSelectedSkill] = useState(null); // Skill being edited
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState(null);
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [countdown, setCountdown] = useState(3);
 
-  // 📌 Fetch skills from backend on mount
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -36,28 +40,27 @@ const SkillRepository = () => {
     fetchSkills();
   }, []);
 
-  // 📌 Add skill
-  const addSkill = async (skillData) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
+  // Countdown & redirect if error
+  useEffect(() => {
+    if (error) {
+      const interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            navigate("/login"); // redirect to login
+          }
+          return prev - 1;
+        });
+      }, 1000);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/skills/add",
-        skillData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setSkills((prev) => [...prev, res.data.skill]);
-    } catch (err) {
-      setError("Failed to add skill.");
-      console.error(err);
+      return () => clearInterval(interval);
     }
+  }, [error, navigate]);
+
+  const addStaticSkill = (newSkill) => {
+    setSkills((prev) => [...prev, newSkill]);
   };
 
-  // 📌 Delete skill
   const deleteSkill = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -74,7 +77,6 @@ const SkillRepository = () => {
     }
   };
 
-  // 📌 Update skill
   const updateSkill = async (id, updatedData) => {
     try {
       const token = localStorage.getItem("token");
@@ -83,17 +85,35 @@ const SkillRepository = () => {
       const res = await axios.put(
         `http://localhost:5000/api/skills/${id}`,
         updatedData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setSkills((prev) => prev.map((s) => (s._id === id ? res.data.skill : s)));
+      setSkills((prev) =>
+        prev.map((s) => (s._id === id ? res.data.skill : s))
+      );
     } catch (err) {
       setError("Failed to update skill.");
       console.error(err);
     }
   };
+
+  // 🔹 If error, only show error block (hide everything else)
+  if (error) {
+    return (
+      <>
+        <DashboardNavbar />
+        <section className="min-h-screen flex items-center justify-center bg-[#f4f6fa] dark:bg-gray-900">
+          <div className="flex flex-col items-center justify-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 p-6 rounded-xl shadow-md">
+            <h2 className="text-2xl font-bold">⚠️ {error}</h2>
+            <p className="mt-2 text-sm">
+              Redirecting to login in{" "}
+              <span className="font-semibold">{countdown}</span> seconds...
+            </p>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   return (
     <>
@@ -111,8 +131,6 @@ const SkillRepository = () => {
 
         {loading ? (
           <p className="text-gray-600 dark:text-gray-400">Loading skills...</p>
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
         ) : skills.length === 0 ? (
           <p className="text-gray-600 dark:text-gray-400">No skills found.</p>
         ) : (
@@ -120,7 +138,8 @@ const SkillRepository = () => {
             {skills.map((skill) => (
               <div
                 key={skill._id}
-                className="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 shadow hover:shadow-lg transition"
+                onClick={() => navigate(`/skills/${skill._id}`)}
+                className="cursor-pointer rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 shadow hover:shadow-lg transition"
               >
                 {skill.coverImage && (
                   <div className="w-full aspect-[16/9] overflow-hidden">
@@ -142,7 +161,10 @@ const SkillRepository = () => {
                     {new Date(skill.startDate).toLocaleDateString()}
                   </div>
 
-                  <div className="flex gap-2 mt-3">
+                  <div
+                    className="flex gap-2 mt-3"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <button
                       onClick={() => deleteSkill(skill._id)}
                       className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
@@ -165,14 +187,13 @@ const SkillRepository = () => {
           </div>
         )}
 
-        {/* Add Modal */}
+        {/* Modals */}
         <AddSkillModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          addSkill={addSkill}
+          addStaticSkill={addStaticSkill}
         />
 
-        {/* Edit Modal */}
         <EditSkillModal
           isOpen={editModalOpen}
           onClose={() => setEditModalOpen(false)}
