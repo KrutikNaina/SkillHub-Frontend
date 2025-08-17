@@ -10,7 +10,6 @@ const DashboardNavbar = () => {
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     setToken(storedToken);
-    console.log('Token:', storedToken); // ✅ Log token to console
   }, []);
 
   const isActive = (path) =>

@@ -1,8 +1,9 @@
-// ✅ Imports
+// pages/Profile.jsx
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Github, Linkedin, Twitter, Pencil } from 'lucide-react'
 import DashboardNavbar from '../components/DashboardNavbar'
+import { useNavigate } from 'react-router-dom'
 
 const tabs = [
   { key: 'projects', label: '📁 My Projects' },
@@ -11,73 +12,90 @@ const tabs = [
 ]
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState('projects')
+  const navigate = useNavigate()
+
+  const [activeTab, setActiveTab] = useState('starred')  
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [countdown, setCountdown] = useState(5)
   const [starredSkills, setStarredSkills] = useState([])
-  const [followers, setFollowers] = useState([]) // 👥 State for followers
+  const [followers, setFollowers] = useState([]) 
 
   // ✅ Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token')
-        if (!token) return console.error('No token found')
+        if (!token) throw new Error("No token found")
 
         const res = await axios.get('http://localhost:5000/api/users/me', {
           headers: { Authorization: `Bearer ${token}` }
         })
         setProfile(res.data)
       } catch (err) {
-        console.error('Error fetching profile:', err)
+        const errorMessage =
+          err.message === "No token found"
+            ? "Could not load profile. Please log in again."
+            : "Failed to load profile data."
+        setError(errorMessage)
+
+        // Start countdown if auth error
+        if (err.message === "No token found") {
+          let timer = setInterval(() => {
+            setCountdown(prev => {
+              if (prev === 1) {
+                clearInterval(timer)
+                navigate("/login")
+              }
+              return prev - 1
+            })
+          }, 1000)
+        }
       } finally {
         setLoading(false)
       }
     }
     fetchProfile()
-  }, [])
+  }, [navigate])
 
-  // ✅ Fetch starred skills
-  useEffect(() => {
-    const fetchStarred = async () => {
-      if (activeTab !== 'starred') return
-      try {
-        const token = localStorage.getItem('token')
-        if (!token) return console.error('No token found')
+  // ✅ Loading state
+  if (loading) return (
+    <p className="text-center mt-10 text-gray-500 animate-pulse">
+      Loading profile...
+    </p>
+  )
 
-        const res = await axios.get('http://localhost:5000/api/stars/my', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        setStarredSkills(res.data)
-      } catch (err) {
-        console.error('Error fetching starred skills:', err)
-      }
-    }
-    fetchStarred()
-  }, [activeTab])
+  // 🔴 Error Screen with Countdown
+  if (error && error.includes("log in again")) {
+    return (
+      <>
+        <DashboardNavbar />
+        <section className="min-h-screen flex items-center justify-center bg-[#f4f6fa] dark:bg-gray-900">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg text-center max-w-md">
+            <h2 className="text-2xl font-bold text-red-500 mb-4">⚠️ Error</h2>
+            <p className="text-gray-700 dark:text-gray-300 mb-2">{error}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Redirecting to login in <span className="font-semibold">{countdown}</span> seconds...
+            </p>
+            <div className="mt-6">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-red-500 h-2 rounded-full transition-all duration-1000"
+                  style={{ width: `${(countdown / 5) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </>
+    )
+  }
 
-  // ✅ Fetch followers
-  useEffect(() => {
-    const fetchFollowers = async () => {
-      if (activeTab !== 'followers' || !profile?._id) return
-      try {
-        const token = localStorage.getItem('token')
-        if (!token) return console.error('No token found')
-
-        const res = await axios.get(`http://localhost:5000/api/followers/${profile._id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-
-        setFollowers(res.data) // Now res is defined
-      } catch (err) {
-        console.error('Error fetching followers:', err)
-      }
-    }
-    fetchFollowers()
-  }, [activeTab, profile?._id])
-
-  if (loading) return <p className="text-center mt-10">Loading profile...</p>
-  if (!profile) return <p className="text-center mt-10 text-red-500">Could not load profile. Please log in again.</p>
+  // Generic error (non-auth)
+  if (error) return (
+    <p className="p-6 text-red-500">{error}</p>
+  )
 
   return (
     <>

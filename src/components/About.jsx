@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom' // ✅ Import navigation hook
 const About = () => {
   const images = [aboutImage1, aboutImage2]
   const [currentImage, setCurrentImage] = useState(0)
-  const navigate = useNavigate() // ✅ Initialize navigate
+
+  const navigate = useNavigate() // ✅ initialize navigation
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,9 +49,10 @@ const About = () => {
             <li>🧠 Learn with accountability and progress streaks</li>
           </ul>
 
-          {/* ✅ Button with navigation */}
+
+          {/* CTA BUTTON with login route */}
           <button
-            onClick={handleExploreSkills}
+            onClick={() => navigate('/login')} // ✅ Route to /login
             className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
           >
             🔍 Explore Skills

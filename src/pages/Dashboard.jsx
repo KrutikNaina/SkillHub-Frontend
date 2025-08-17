@@ -102,12 +102,15 @@ const Dashboard = () => {
     },
   ];
 
-  const displayAchievements = achievements.length > 0 ? achievements : defaultAchievements;
+  const displayAchievements =
+    achievements.length > 0 ? achievements : defaultAchievements;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 flex">
-      {/* Sidebar - Fixed */}
-      <aside className="fixed top-0 left-0 w-64 h-screen bg-white shadow-xl rounded-r-3xl p-6 flex flex-col justify-between">
+
+    <div className="min-h-screen flex bg-gradient-to-br from-purple-100 to-pink-100">
+      {/* Sidebar - fixed */}
+      <aside className="w-64 bg-white shadow-xl rounded-r-3xl p-6 hidden md:flex flex-col justify-between
+                        fixed top-0 left-0 h-screen z-50">
         <div>
           <h2 className="text-2xl font-bold text-purple-700 mb-10">SkillHub</h2>
           <nav className="flex flex-col gap-6 text-gray-700">
@@ -140,8 +143,9 @@ const Dashboard = () => {
         </button>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-6 md:p-10 ml-64">
+
+      {/* Main Content - shifted right */}
+      <main className="flex-1 p-6 md:p-10 md:ml-64">
         <div className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-3xl font-bold text-purple-800">
@@ -213,7 +217,9 @@ const Dashboard = () => {
 };
 
 const Card = ({ title, value, color }) => (
-  <div className={`bg-gradient-to-r ${color} text-white p-6 rounded-2xl shadow-md transform hover:scale-105 transition-transform duration-300`}>
+  <div
+    className={`bg-gradient-to-r ${color} text-white p-6 rounded-2xl shadow-md transform hover:scale-105 transition-transform duration-300`}
+  >
     <h3 className="text-xl font-semibold">{title}</h3>
     <p className="text-3xl font-bold mt-2">{value}</p>
   </div>

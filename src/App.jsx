@@ -22,13 +22,15 @@ import EditProfile from './pages/EditProfile'
 import Milestones from './pages/Milestones'
 import SkillRepository from './pages/SkillRepository'
 import AddSkillModal from './pages/AddSkillModal'
+import SkillDetails from './pages/SkillDetails'
 
 function AppWrapper() {
   const [isLoggedIn] = useState(true)
   const location = useLocation()
 
   // All dashboard-related paths (that use their own layout/header)
-  const isCustomDashboardLayout = /^\/(dashboard|profile|progress-log|repository|milestones|skill-repository|edit-profile|add-skillModal)/.test(
+
+  const isCustomDashboardLayout = /^\/(dashboard|profile|logs|repository|milestones|skill-repository|skills|edit-profile|add-skillModal)/.test(
     location.pathname
   )
 
@@ -64,6 +66,7 @@ function AppWrapper() {
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/milestones" element={<Milestones />} />
         <Route path="/skill-repository" element={<SkillRepository />} />
+        <Route path="/skills/:id" element={<SkillDetails />} />
         <Route path="/add-skillModal" element={<AddSkillModal />} />
       </Routes>
     </div>
