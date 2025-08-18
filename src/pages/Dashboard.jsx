@@ -65,12 +65,17 @@ const Dashboard = () => {
           return { data: { count: 0 } }; // Fallback to 0
         });
 
-        const logsRes = await axios.get("http://localhost:5000/api/logs/count", {
+        console.log("Milestone count:", milestonesRes.data.count);
+
+
+        const logsRes = await axios.get("http://localhost:5000/api/progresslogs/count", {
           headers: { Authorization: `Bearer ${token}` },
         }).catch(err => {
           console.warn(`Logs count fetch failed: ${err.response?.status} ${err.response?.data?.message || err.message}`);
-          return { data: { count: 0 } }; // Fallback to 0
+          return { data: { count: 0 } }; // fallback
         });
+
+        console.log("User Progress Logs Count:", logsRes.data.count)
 
         setStats({
           skillsCount: skillsRes.data.count || 0,

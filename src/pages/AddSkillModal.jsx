@@ -64,7 +64,7 @@ const AddSkillModal = ({ isOpen, onClose, addStaticSkill }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity duration-300">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-8 relative transform transition-all duration-300 scale-100">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] p-8 pb-6 relative overflow-y-auto transform transition-all duration-300 scale-100">
         <style>
           {`
             @keyframes blink {

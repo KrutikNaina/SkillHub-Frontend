@@ -26,13 +26,15 @@ const Milestones = () => {
       const res = await axios.get("http://localhost:5000/api/milestones/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMilestones(res.data || []);
+      // Extract the milestones array from response
+      setMilestones(res.data.milestones || []);
     } catch (err) {
       console.error("Error fetching milestones:", err);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleAddMilestone = async (e) => {
     e.preventDefault();
