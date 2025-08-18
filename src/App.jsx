@@ -23,6 +23,8 @@ import Milestones from './pages/Milestones'
 import SkillRepository from './pages/SkillRepository'
 import AddSkillModal from './pages/AddSkillModal'
 import SkillDetails from './pages/SkillDetails'
+import AddMilestone from "./pages/AddMilestone"; // ✅ import page
+
 
 function AppWrapper() {
   const [isLoggedIn] = useState(true)
@@ -68,6 +70,8 @@ function AppWrapper() {
         <Route path="/skill-repository" element={<SkillRepository />} />
         <Route path="/skills/:id" element={<SkillDetails />} />
         <Route path="/add-skillModal" element={<AddSkillModal />} />
+        <Route path="/add-milestone" element={<AddMilestone />} />
+
       </Routes>
     </div>
   )

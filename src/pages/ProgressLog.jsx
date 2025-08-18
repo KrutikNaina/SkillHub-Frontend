@@ -112,7 +112,7 @@ const ProgressLog = ({ token }) => {
   
   return (
     <>
-    <DashboardNavbar/>
+    {/* <DashboardN avbar/> */}
       <section className="w-full min-h-screen px-6 py-24 bg-[#f4f6fa] dark:bg-gray-900 text-gray-900 dark:text-white">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
