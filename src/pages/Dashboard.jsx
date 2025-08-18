@@ -19,6 +19,7 @@ const Dashboard = () => {
   });
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -31,28 +32,44 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        console.error("No token found");
+        console.error("No token found, redirecting to login");
+        setError("Authentication token missing. Please log in again.");
         setLoading(false);
+        navigate("/login");
         return;
       }
 
       try {
+        // Fetch profile
         const profileRes = await axios.get("http://localhost:5000/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
+        }).catch(err => {
+          throw new Error(`Profile fetch failed: ${err.response?.status} ${err.response?.data?.message || err.message}`);
         });
-
         setProfile(profileRes.data);
 
+        // Fetch skills count
         const skillsRes = await axios.get("http://localhost:5000/api/skills/count", {
           headers: { Authorization: `Bearer ${token}` },
+        }).catch(err => {
+          console.warn(`Skills count fetch failed: ${err.response?.status} ${err.response?.data?.message || err.message}`);
+          return { data: { count: 0 } }; // Fallback to 0
         });
 
+        // Fetch milestones count
         const milestonesRes = await axios.get("http://localhost:5000/api/milestones/count", {
           headers: { Authorization: `Bearer ${token}` },
+        }).catch(err => {
+          console.warn(`Milestones count fetch failed: ${err.response?.status} ${err.response?.data?.message || err.message}`);
+          return { data: { count: 0 } }; // Fallback to 0
         });
 
+        // Fetch logs count
         const logsRes = await axios.get("http://localhost:5000/api/logs/count", {
           headers: { Authorization: `Bearer ${token}` },
+        }).catch(err => {
+          console.warn(`Logs count fetch failed: ${err.response?.status} ${err.response?.data?.message || err.message}`);
+          return { data: { count: 0 } }; // Fallback to 0
         });
 
         setStats({
@@ -61,29 +78,38 @@ const Dashboard = () => {
           logsCount: logsRes.data.count || 0,
         });
 
+        // Fetch achievements
         const achievementsRes = await axios.get("http://localhost:5000/api/achievements", {
           headers: { Authorization: `Bearer ${token}` },
+        }).catch(err => {
+          console.warn(`Achievements fetch failed: ${err.response?.status} ${err.response?.data?.message || err.message}`);
+          return { data: [] }; // Fallback to empty array
         });
-
         setAchievements(achievementsRes.data || []);
+
       } catch (err) {
-        console.error("Error loading dashboard data:", err);
+        console.error("Error loading dashboard data:", {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data,
+        });
+        setError(`Failed to load dashboard: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
 
     fetchDashboardData();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return <p className="text-center mt-10">Loading dashboard...</p>;
   }
 
-  if (!profile) {
+  if (error || !profile) {
     return (
       <p className="text-center mt-10 text-red-500">
-        Could not load profile. Please log in again.
+        {error || "Could not load profile. Please log in again."}
       </p>
     );
   }
