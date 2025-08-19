@@ -32,7 +32,7 @@ function AppWrapper() {
 
   // All dashboard-related paths (that use their own layout/header)
 
-  const isCustomDashboardLayout = /^\/(dashboard|profile|logs|repository|milestones|skill-repository|skills|edit-profile|add-skillModal)/.test(
+  const isCustomDashboardLayout = /^\/(dashboard|profile|progress-log|repository|milestones|skill-repository|skills|edit-profile|add-skillModal)/.test(
     location.pathname
   )
 
