@@ -14,7 +14,7 @@ const EditProfile = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate(); // ✅ Initialize navigation
+  const navigate = useNavigate(); // ✅ Navigation hook
 
   // ✅ Fetch current profile data when page loads
   useEffect(() => {
@@ -88,6 +88,12 @@ const EditProfile = () => {
 
       setMessage('✅ Profile updated successfully!');
       console.log(res.data);
+
+      // ⏳ Show success message briefly, then redirect
+      setTimeout(() => {
+        navigate('/profile');
+      }, 1000);
+
     } catch (err) {
       console.error(err);
       setMessage('❌ Failed to update profile');
@@ -105,6 +111,7 @@ const EditProfile = () => {
         <div className="max-w-3xl mx-auto bg-gray-100 dark:bg-gray-800 p-8 rounded-xl shadow-md">
           <h2 className="text-2xl font-bold mb-6 text-center">Edit Your Profile</h2>
 
+          {/* Avatar Upload */}
           <div className="flex flex-col items-center gap-4 mb-8">
             <img
               src={avatar || '/default-avatar.png'}
@@ -123,6 +130,7 @@ const EditProfile = () => {
             </label>
           </div>
 
+          {/* Profile Form */}
           <form className="space-y-5" onSubmit={handleSubmit}>
             <Input label="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
             <TextArea label="Bio" value={bio} onChange={(e) => setBio(e.target.value)} />
@@ -150,11 +158,12 @@ const EditProfile = () => {
               <div className="text-center mt-4 text-sm font-medium">{message}</div>
             )}
 
+            {/* Buttons */}
             <div className="flex justify-end gap-4 mt-6">
               <button
                 type="button"
                 className="px-5 py-2 rounded-lg bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white"
-                onClick={() => navigate('/profile')} // ✅ Redirect to profile
+                onClick={() => navigate('/profile')} // Cancel → profile
               >
                 Cancel
               </button>

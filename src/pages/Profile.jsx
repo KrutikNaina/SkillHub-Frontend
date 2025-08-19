@@ -1,7 +1,8 @@
 // pages/Profile.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { Github, Linkedin, Twitter } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 import { useNavigate } from "react-router-dom";
 
@@ -107,21 +108,54 @@ const Profile = () => {
 
           {/* Avatar & Info */}
           <div className="text-center">
-            <img
-              src={profile.avatar || "/default-avatar.png"}
-              alt={profile.name || "User Avatar"}
+         <img
+              src={profile?.avatar ? profile.avatar : "/default-avatar.png"}
+              alt={profile?.displayName || "User Avatar"}
               className="w-28 h-28 rounded-full mx-auto border-4 border-blue-600 shadow-md object-cover"
             />
             <h1 className="text-3xl font-bold mt-4">{profile.displayName}</h1>
+
+            {/* Bio */}
             <p className="text-gray-600 dark:text-gray-400 mt-2">
               {profile.bio || "No bio yet"} 🚀
             </p>
+
+            {/* Social links */}
+            <div className="flex justify-center gap-5 mt-4">
+              {profile.github && (
+                <a
+                  href={profile.github}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Github className="w-5 h-5 hover:text-blue-500 transition" />
+                </a>
+              )}
+              {profile.linkedin && (
+                <a
+                  href={profile.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Linkedin className="w-5 h-5 hover:text-blue-500 transition" />
+                </a>
+              )}
+              {profile.twitter && (
+                <a
+                  href={profile.twitter}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Twitter className="w-5 h-5 hover:text-blue-500 transition" />
+                </a>
+              )}
+            </div>
           </div>
 
           {/* My Skills */}
           <div className="mt-12">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">🛠️ My Skills</h2>
+            <div className="flex justify-center mb-6">
+              <h2 className="text-2xl font-bold ">🛠️ My Skills</h2>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
