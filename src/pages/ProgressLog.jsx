@@ -1,15 +1,16 @@
-// ProgressLog.jsx
-import { useState, useEffect } from 'react'
-import AddProgressLogModal from './AddProgressLogModal'
-import { CalendarDays, Trash2, Pencil } from 'lucide-react'
-import DashboardNavbar from '../components/DashboardNavbar'
+import { useState, useEffect } from "react";
+import AddProgressLogModal from "./AddProgressLogModal";
+import EditProgressLogModal from "./EditProgressLogModel"; // ✅ new import
+import { CalendarDays, Trash2, Pencil } from "lucide-react";
+import DashboardNavbar from "../components/DashboardNavbar";
 
 const ProgressLog = ({ token }) => {
-  const [logs, setLogs] = useState([])
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingLog, setEditingLog] = useState(null) // ✅ track log being edited
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [logs, setLogs] = useState([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingLog, setEditingLog] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Fetch progress logs
   useEffect(() => {
@@ -18,7 +19,7 @@ const ProgressLog = ({ token }) => {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No token found");
 
-        setLoading(true)
+        setLoading(true);
         const res = await fetch("http://localhost:5000/api/progresslogs/user", {
           method: "GET",
           headers: {
@@ -36,27 +37,27 @@ const ProgressLog = ({ token }) => {
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     };
 
     fetchLogs();
   }, []);
 
-  // Add or update log
-  const handleSaveLog = (savedLog) => {
-    if (editingLog) {
-      // update existing log
-      setLogs((prev) =>
-        prev.map((log) => (log._id === savedLog._id ? savedLog : log))
-      )
-    } else {
-      // new log
-      setLogs((prev) => [savedLog, ...prev])
-    }
-    setEditingLog(null)
-    setIsModalOpen(false)
-  }
+  // Add log
+  const handleAddLog = (savedLog) => {
+    setLogs((prev) => [savedLog, ...prev]);
+    setIsAddModalOpen(false);
+  };
+
+  // Update log
+  const handleUpdateLog = (updatedLog) => {
+    setLogs((prev) =>
+      prev.map((log) => (log._id === updatedLog._id ? updatedLog : log))
+    );
+    setEditingLog(null);
+    setIsEditModalOpen(false);
+  };
 
   // Delete log handler
   const handleDeleteLog = async (id) => {
@@ -84,44 +85,50 @@ const ProgressLog = ({ token }) => {
   };
 
   useEffect(() => {
-    document.title = 'Progress Log | SkillHub'
-  }, [])
+    document.title = "Progress Log | SkillHub";
+  }, []);
 
   const LogCard = ({ log }) => {
     const extractYouTubeID = (url) => {
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const regExp =
+        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
       const match = url.match(regExp);
-      return (match && match[2].length === 11) ? match[2] : null;
+      return match && match[2].length === 11 ? match[2] : null;
     };
 
     return (
       <div className="p-6 rounded-2xl shadow-md hover:shadow-xl bg-white dark:bg-gray-800 relative transition">
-        {/* Action Buttons */}
-        <div className="absolute top-3 right-3 flex gap-3">
-          <button
-            onClick={() => {
-              setEditingLog(log)
-              setIsModalOpen(true)
-            }}
-            className="text-blue-600 hover:text-blue-800"
-            title="Edit Log"
-          >
-            <Pencil size={20} />
-          </button>
-          <button
-            onClick={() => handleDeleteLog(log._id)}
-            className="text-red-600 hover:text-red-800"
-            title="Delete Log"
-          >
-            <Trash2 size={20} />
-          </button>
+        {/* Date + Action Buttons */}
+        <div className="absolute top-3 right-3 flex flex-col items-end gap-2">
+          {/* Date shown above buttons */}
+          <span className="text-sm text-gray-600 dark:text-gray-400">
+            {new Date(log.date).toLocaleDateString()}
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                setEditingLog(log);
+                setIsEditModalOpen(true); // ✅ open edit modal
+              }}
+              className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white shadow-md transition transform hover:scale-110"
+              title="Edit Log"
+            >
+              <Pencil size={18} />
+            </button>
+            <button
+              onClick={() => handleDeleteLog(log._id)}
+              className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white shadow-md transition transform hover:scale-110"
+              title="Delete Log"
+            >
+              <Trash2 size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-base font-semibold text-blue-600">{log.skillTitle || log.skill}</span>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            {new Date(log.date).toLocaleDateString()}
+        <div className="mb-2">
+          <span className="text-base font-semibold text-blue-600">
+            {log.skillTitle || log.skill}
           </span>
         </div>
 
@@ -142,11 +149,13 @@ const ProgressLog = ({ token }) => {
         )}
 
         {/* Video */}
-        {log.video && log.video.includes('youtube') && (
+        {log.video && log.video.includes("youtube") && (
           <div className="mt-3 aspect-w-16 aspect-h-9">
             <iframe
               className="rounded-lg w-full h-64"
-              src={`https://www.youtube.com/embed/${extractYouTubeID(log.video)}`}
+              src={`https://www.youtube.com/embed/${extractYouTubeID(
+                log.video
+              )}`}
               title="YouTube video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -155,9 +164,12 @@ const ProgressLog = ({ token }) => {
           </div>
         )}
 
-        {log.video && !log.video.includes('youtube') && (
+        {log.video && !log.video.includes("youtube") && (
           <div className="mt-3">
-            <video controls className="rounded-lg mt-2 w-full max-h-72 object-cover shadow-md">
+            <video
+              controls
+              className="rounded-lg mt-2 w-full max-h-72 object-cover shadow-md"
+            >
               <source src={log.video} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
@@ -169,7 +181,7 @@ const ProgressLog = ({ token }) => {
 
   return (
     <>
-      <DashboardNavbar/>
+      <DashboardNavbar />
       <section className="w-full min-h-screen px-6 py-20 bg-[#f4f6fa] dark:bg-gray-900 text-gray-900 dark:text-white">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
@@ -180,8 +192,7 @@ const ProgressLog = ({ token }) => {
             </h1>
             <button
               onClick={() => {
-                setEditingLog(null)
-                setIsModalOpen(true)
+                setIsAddModalOpen(true);
               }}
               className="px-5 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
             >
@@ -190,14 +201,18 @@ const ProgressLog = ({ token }) => {
           </div>
 
           {/* Loader / Error / Empty State */}
-          {loading && <p className="text-center text-gray-500">Loading logs...</p>}
+          {loading && (
+            <p className="text-center text-gray-500">Loading logs...</p>
+          )}
           {error && <p className="text-center text-red-600">{error}</p>}
 
           {!loading && !error && logs.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-gray-600 dark:text-gray-400 text-lg">No progress logs yet.</p>
+              <p className="text-gray-600 dark:text-gray-400 text-lg">
+                No progress logs yet.
+              </p>
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setIsAddModalOpen(true)}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
                 Add Your First Log
@@ -214,19 +229,26 @@ const ProgressLog = ({ token }) => {
         </div>
       </section>
 
-      {/* Modal for Add/Edit */}
+      {/* Modal for Add */}
       <AddProgressLogModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingLog(null)
-        }}
-        onAdd={handleSaveLog}
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddLog}
         token={token}
-        editingLog={editingLog} // ✅ pass log for edit mode
+      />
+
+      <EditProgressLogModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingLog(null);
+        }}
+        onUpdate={handleUpdateLog} // ✅ was onLogUpdated
+        token={token}
+        editingLog={editingLog}
       />
     </>
-  )
-}
+  );
+};
 
-export default ProgressLog
+export default ProgressLog;
