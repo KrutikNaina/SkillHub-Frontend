@@ -68,7 +68,11 @@ const DashboardNavbar = () => {
         {/* Mobile Hamburger */}
         <div className="md:hidden flex items-center">
           <button onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {menuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
       </div>
