@@ -38,12 +38,6 @@ const DashboardNavbar = () => {
               <Link to="/dashboard" className={isActive("/dashboard")}>
                 Dashboard
               </Link>
-              <Link to="/profile" className={isActive("/profile")}>
-                Profile
-              </Link>
-              <Link to="/progress-log" className={isActive("/progress-log")}>
-                Progress Log
-              </Link>
               <Link
                 to="/skill-repository"
                 className={isActive("/skill-repository")}
@@ -52,6 +46,15 @@ const DashboardNavbar = () => {
               </Link>
               <Link to="/milestones" className={isActive("/milestones")}>
                 Milestones
+              </Link>
+              <Link to="/progress-log" className={isActive("/progress-log")}>
+                Progress Log
+              </Link>
+              <Link to="/feed" className={isActive("/feed")}>
+                Feed
+              </Link>
+              <Link to="/profile" className={isActive("/profile")}>
+                Profile
               </Link>
             </>
           )}

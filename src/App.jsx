@@ -23,7 +23,8 @@ import Milestones from './pages/Milestones'
 import SkillRepository from './pages/SkillRepository'
 import AddSkillModal from './pages/AddSkillModal'
 import SkillDetails from './pages/SkillDetails'
-import AddMilestone from "./pages/AddMilestone"; // ✅ import page
+import AddMilestone from "./pages/AddMilestone"; 
+import Feed from "./pages/Feed"; 
 
 
 function AppWrapper() {
@@ -32,7 +33,7 @@ function AppWrapper() {
 
   // All dashboard-related paths (that use their own layout/header)
 
-  const isCustomDashboardLayout = /^\/(dashboard|profile|progress-log|repository|milestones|skill-repository|skills|edit-profile|add-skillModal)/.test(
+  const isCustomDashboardLayout = /^\/(dashboard|profile|progress-log|feed|repository|milestones|skill-repository|skills|edit-profile|add-skillModal)/.test(
     location.pathname
   )
 
@@ -71,6 +72,7 @@ function AppWrapper() {
         <Route path="/skills/:id" element={<SkillDetails />} />
         <Route path="/add-skillModal" element={<AddSkillModal />} />
         <Route path="/add-milestone" element={<AddMilestone />} />
+        <Route path="/feed" element={< Feed />} />
 
       </Routes>
     </div>
