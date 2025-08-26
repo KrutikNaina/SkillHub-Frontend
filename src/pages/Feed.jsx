@@ -5,6 +5,7 @@ const Feed = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null); // 🔹 For popup
 
   // Fetch all users for feed (excluding logged-in user)
   useEffect(() => {
@@ -12,7 +13,7 @@ const Feed = () => {
       try {
         setLoading(true);
 
-        const token = localStorage.getItem("token"); // ✅ Get token from localStorage
+        const token = localStorage.getItem("token");
         if (!token) {
           setError("No token found. Please log in again.");
           setLoading(false);
@@ -23,9 +24,9 @@ const Feed = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // ✅ send token
+            Authorization: `Bearer ${token}`,
           },
-          credentials: "include", // if you're using sessions/cookies
+          credentials: "include",
         });
 
         if (!res.ok) {
@@ -52,7 +53,10 @@ const Feed = () => {
   // 🔹 Card Component
   const UserCard = ({ user }) => {
     return (
-      <div className="p-6 rounded-2xl shadow-md hover:shadow-xl bg-white dark:bg-gray-800 relative transition flex flex-col items-center text-center">
+      <div
+        onClick={() => setSelectedUser(user)} // open popup
+        className="cursor-pointer p-6 rounded-2xl shadow-md hover:shadow-xl bg-white dark:bg-gray-800 relative transition flex flex-col items-center text-center"
+      >
         {/* Avatar */}
         <img
           src={user.avatar || "https://via.placeholder.com/100"}
@@ -67,6 +71,47 @@ const Feed = () => {
         <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
           {user.bio || "No bio added yet."}
         </p>
+      </div>
+    );
+  };
+
+  // 🔹 Modal Component
+  const UserModal = ({ user, onClose }) => {
+    if (!user) return null;
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg w-96 relative">
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+
+          {/* Avatar */}
+          <img
+            src={user.avatar || "https://via.placeholder.com/150"}
+            alt={user.displayName}
+            className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-2 border-blue-500 shadow-md"
+          />
+
+          {/* Name */}
+          <h2 className="text-xl font-bold text-center text-blue-600">
+            {user.displayName}
+          </h2>
+
+          {/* Bio */}
+          <p className="text-center text-gray-600 dark:text-gray-300 mt-2">
+            {user.bio || "No bio available."}
+          </p>
+
+          {/* Followers / Following */}
+          <div className="flex justify-center gap-6 mt-4 text-sm text-gray-500">
+            <span>{user.followersCount || 0} Followers</span>
+            <span>{user.followingCount || 0} Following</span>
+          </div>
+        </div>
       </div>
     );
   };
@@ -103,6 +148,11 @@ const Feed = () => {
           </div>
         </div>
       </section>
+
+      {/* Modal */}
+      {selectedUser && (
+        <UserModal user={selectedUser} onClose={() => setSelectedUser(null)} />
+      )}
     </>
   );
 };
