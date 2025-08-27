@@ -5,13 +5,14 @@ const Feed = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null); // 🔹 For popup
+  const [selectedUser, setSelectedUser] = useState(null);
 
   // Fetch all users for feed (excluding logged-in user)
   useEffect(() => {
     const fetchFeed = async () => {
       try {
         setLoading(true);
+        setError(null);
 
         const token = localStorage.getItem("token");
         if (!token) {
@@ -35,7 +36,7 @@ const Feed = () => {
         }
 
         const data = await res.json();
-        setUsers(data);
+        setUsers(data); // ✅ backend must provide isFollowing
       } catch (err) {
         setError(err.message);
       } finally {
@@ -50,30 +51,111 @@ const Feed = () => {
     document.title = "Feed | SkillHub";
   }, []);
 
-  // 🔹 Card Component
-  const UserCard = ({ user }) => {
-    return (
-      <div
-        onClick={() => setSelectedUser(user)} // open popup
-        className="cursor-pointer p-6 rounded-2xl shadow-md hover:shadow-xl bg-white dark:bg-gray-800 relative transition flex flex-col items-center text-center"
-      >
-        {/* Avatar */}
-        <img
-          src={user.avatar || "https://via.placeholder.com/100"}
-          alt={user.displayName}
-          className="w-20 h-20 rounded-full object-cover mb-4 border-2 border-blue-500 shadow-md"
-        />
-        {/* Username */}
-        <h3 className="text-lg font-semibold text-blue-600">
-          {user.displayName}
-        </h3>
-        {/* Bio */}
-        <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
-          {user.bio || "No bio added yet."}
-        </p>
-      </div>
-    );
+  // 🔹 Follow User
+  const handleFollow = async (userId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return alert("Please log in first.");
+
+      const res = await fetch("http://localhost:5000/api/followers/follow", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userIdToFollow: userId }), // ✅ match backend
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || "Failed to follow user");
+      }
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === userId ? { ...u, isFollowing: true } : u
+        )
+      );
+    } catch (err) {
+      alert(err.message);
+    }
   };
+
+  // 🔹 Unfollow User
+  const handleUnfollow = async (userId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return alert("Please log in first.");
+
+      const res = await fetch("http://localhost:5000/api/followers/unfollow", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userIdToUnfollow: userId }), // ✅ match backend
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || "Failed to unfollow user");
+      }
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === userId ? { ...u, isFollowing: false } : u
+        )
+      );
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // 🔹 Card Component
+  const UserCard = ({ user }) => (
+    <div
+      onClick={() => setSelectedUser(user)}
+      className="cursor-pointer p-6 rounded-2xl shadow-md hover:shadow-xl bg-white dark:bg-gray-800 relative transition flex flex-col items-center text-center"
+    >
+      <img
+        src={user.avatar || "https://via.placeholder.com/100"}
+        alt={user.displayName}
+        className="w-20 h-20 rounded-full object-cover mb-4 border-2 border-blue-500 shadow-md"
+      />
+
+      <h3 className="text-lg font-semibold text-blue-600">
+        {user.displayName}
+      </h3>
+
+      <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
+        {user.bio || "No bio added yet."}
+      </p>
+
+      <div className="mt-4">
+        {user.isFollowing ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleUnfollow(user._id);
+            }}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          >
+            Unfollow
+          </button>
+        ) : (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleFollow(user._id);
+            }}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            Follow
+          </button>
+        )}
+      </div>
+    </div>
+  );
 
   // 🔹 Modal Component
   const UserModal = ({ user, onClose }) => {
@@ -81,7 +163,6 @@ const Feed = () => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg w-96 relative">
-          {/* Close button */}
           <button
             onClick={onClose}
             className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
@@ -89,24 +170,20 @@ const Feed = () => {
             ✕
           </button>
 
-          {/* Avatar */}
           <img
             src={user.avatar || "https://via.placeholder.com/150"}
             alt={user.displayName}
             className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-2 border-blue-500 shadow-md"
           />
 
-          {/* Name */}
           <h2 className="text-xl font-bold text-center text-blue-600">
             {user.displayName}
           </h2>
 
-          {/* Bio */}
           <p className="text-center text-gray-600 dark:text-gray-300 mt-2">
             {user.bio || "No bio available."}
           </p>
 
-          {/* Followers / Following */}
           <div className="flex justify-center gap-6 mt-4 text-sm text-gray-500">
             <span>{user.followersCount || 0} Followers</span>
             <span>{user.followingCount || 0} Following</span>
@@ -121,12 +198,10 @@ const Feed = () => {
       <DashboardNavbar />
       <section className="w-full min-h-screen px-6 py-20 bg-[#f4f6fa] dark:bg-gray-900 text-gray-900 dark:text-white">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
           <div className="flex justify-between items-center mb-12">
             <h1 className="text-4xl font-bold text-blue-600">User Feed</h1>
           </div>
 
-          {/* Loader / Error / Empty State */}
           {loading && (
             <p className="text-center text-gray-500">Loading users...</p>
           )}
@@ -135,12 +210,12 @@ const Feed = () => {
           {!loading && !error && users.length === 0 && (
             <div className="text-center py-20">
               <p className="text-gray-600 dark:text-gray-400 text-lg">
-                No users available in the feed.
+                No followers added yet <br />
+                Not following anyone yet
               </p>
             </div>
           )}
 
-          {/* Feed Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {users.map((user) => (
               <UserCard key={user._id || user.id} user={user} />
@@ -149,7 +224,6 @@ const Feed = () => {
         </div>
       </section>
 
-      {/* Modal */}
       {selectedUser && (
         <UserModal user={selectedUser} onClose={() => setSelectedUser(null)} />
       )}
