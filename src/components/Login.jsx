@@ -10,7 +10,7 @@ const Login = () => {
 
   useEffect(() => {
     const listener = (event) => {
-      const allowedOrigins = ['http://localhost:5000', 'http://localhost:5173'];
+      const allowedOrigins = ['http://localhost:5000', 'http://localhost:5173','https://skill-hub-backend-4b6u.vercel.app'];
       if (!allowedOrigins.includes(event.origin)) return;
 
       if (event.data?.type === 'oauth-success') {
