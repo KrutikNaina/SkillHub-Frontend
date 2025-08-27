@@ -51,7 +51,7 @@ const Feed = () => {
     document.title = "Feed | SkillHub";
   }, []);
 
-  // 🔹 Follow User
+  // 🔹 Follow User (FIXED ✅)
   const handleFollow = async (userId) => {
     try {
       const token = localStorage.getItem("token");
@@ -63,7 +63,7 @@ const Feed = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ userIdToFollow: userId }), // ✅ match backend
+        body: JSON.stringify({ userId }), // ✅ match backend
       });
 
       if (!res.ok) {
@@ -73,7 +73,7 @@ const Feed = () => {
 
       setUsers((prev) =>
         prev.map((u) =>
-          u._id === userId ? { ...u, isFollowing: true } : u
+          u._id === userId ? { ...u, isFollowing: true, followersCount: (u.followersCount || 0) + 1 } : u
         )
       );
     } catch (err) {
@@ -81,7 +81,7 @@ const Feed = () => {
     }
   };
 
-  // 🔹 Unfollow User
+  // 🔹 Unfollow User (FIXED ✅)
   const handleUnfollow = async (userId) => {
     try {
       const token = localStorage.getItem("token");
@@ -93,7 +93,7 @@ const Feed = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ userIdToUnfollow: userId }), // ✅ match backend
+        body: JSON.stringify({ userId }), // ✅ match backend
       });
 
       if (!res.ok) {
@@ -103,7 +103,7 @@ const Feed = () => {
 
       setUsers((prev) =>
         prev.map((u) =>
-          u._id === userId ? { ...u, isFollowing: false } : u
+          u._id === userId ? { ...u, isFollowing: false, followersCount: Math.max((u.followersCount || 1) - 1, 0) } : u
         )
       );
     } catch (err) {
@@ -130,6 +130,10 @@ const Feed = () => {
       <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
         {user.bio || "No bio added yet."}
       </p>
+
+      <div className="mt-2 text-xs text-gray-500">
+        {user.followersCount || 0} Followers • {user.followingCount || 0} Following
+      </div>
 
       <div className="mt-4">
         {user.isFollowing ? (

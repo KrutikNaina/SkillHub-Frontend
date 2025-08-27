@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
+  Rss,          // Feed
   BookOpen,
+  Target,       // Milestones
   ListTodo,
   User,
   Trophy,
@@ -154,6 +156,13 @@ const Dashboard = () => {
               Dashboard
             </Link>
             <Link
+              to="/feed"
+              className="flex items-center gap-3 hover:text-purple-600"
+            >
+              <Rss className="w-5 h-5" />
+              Feed
+            </Link>
+            <Link
               to="/skill-repository"
               className="flex items-center gap-3 hover:text-purple-600"
             >
@@ -164,7 +173,7 @@ const Dashboard = () => {
               to="/milestones"
               className="flex items-center gap-3 hover:text-purple-600"
             >
-              <BookOpen className="w-5 h-5" />
+              <Target className="w-5 h-5" />
               Milestones
             </Link>
             <Link
