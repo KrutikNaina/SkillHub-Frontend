@@ -49,12 +49,13 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    openPopup('http://localhost:5000/auth/google', 'Google');
+    openPopup('https://skill-hub-backend-4b6u.vercel.app/auth/google', 'Google');
   };
-
+  
   const handleGithubLogin = () => {
-    openPopup('http://localhost:5000/auth/github', 'GitHub');
+    openPopup('https://skill-hub-backend-4b6u.vercel.app/auth/github', 'GitHub');
   };
+  
 
   return (
     <section className="w-full min-h-screen flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
