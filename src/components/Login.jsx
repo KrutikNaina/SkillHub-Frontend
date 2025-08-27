@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Github } from 'lucide-react';
 import googleLogo from '../assets/google-logo.svg';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config.js'
 
 const Login = () => {
   const [warning, setWarning] = useState('');
@@ -48,12 +49,13 @@ const Login = () => {
     );
   };
 
+
   const handleGoogleLogin = () => {
-    openPopup('https://skill-hub-backend-4b6u.vercel.app/auth/google', 'Google');
+    openPopup(`${API_BASE_URL}/auth/google`, "Google");
   };
   
   const handleGithubLogin = () => {
-    openPopup('https://skill-hub-backend-4b6u.vercel.app/auth/github', 'GitHub');
+    openPopup(`${API_BASE_URL}/auth/github`, "GitHub");
   };
   
 
