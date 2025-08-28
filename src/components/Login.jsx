@@ -11,7 +11,7 @@ const Login = () => {
 
   useEffect(() => {
     const listener = (event) => {
-      const allowedOrigins = ['http://localhost:5000', 'http://localhost:5173','https://skill-hub-backend-4b6u.vercel.app'];
+      const allowedOrigins = ['http://localhost:5000', 'http://localhost:5173','https://skill-hub-backend-4b6u.vercel.app', 'https://skillhub.krutiknaina.com/'];
       if (!allowedOrigins.includes(event.origin)) return;
 
       if (event.data?.type === 'oauth-success') {
@@ -51,11 +51,11 @@ const Login = () => {
 
 
   const handleGoogleLogin = () => {
-    openPopup(`${API_BASE_URL}/auth/google`, "Google");
+    openPopup('https://skillhub.krutiknaina.com//auth/google', 'Google');
   };
   
   const handleGithubLogin = () => {
-    openPopup(`${API_BASE_URL}/auth/github`, "GitHub");
+    openPopup('https://skillhub.krutiknaina.com//auth/github', 'GitHub');
   };
   
 
