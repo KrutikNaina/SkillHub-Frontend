@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Github } from 'lucide-react';
 import googleLogo from '../assets/google-logo.svg';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../config.js';
 
 const Login = () => {
   const [warning, setWarning] = useState('');
@@ -13,7 +12,7 @@ const Login = () => {
   const BACKEND_URL =
     import.meta.env.MODE === "development"
       ? "http://localhost:5000"
-      : "https://skillhub-backend.vercel.app"; // change if backend is hosted elsewhere
+      : "https://skill-hub-backend-4b6u.vercel.app";
 
   const FRONTEND_URL =
     import.meta.env.MODE === "development"
