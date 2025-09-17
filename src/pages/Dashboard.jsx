@@ -102,7 +102,7 @@ const Dashboard = () => {
     );
   }
 
-  // ✅ Static Achievements (since API removed)
+  //  Static Achievements (since API removed)
   const defaultAchievements = [
     {
       title: "Skill Initiator",
@@ -253,7 +253,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* ✅ Recent Skills Section */}
+        {/*  Recent Skills Section */}
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4 text-purple-700">
             Recent Skills
