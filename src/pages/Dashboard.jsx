@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
-  Rss,          // Feed
   BookOpen,
-  Target,       // Milestones
   ListTodo,
   User,
   Trophy,
@@ -19,8 +17,7 @@ const Dashboard = () => {
     milestonesCount: 0,
     logsCount: 0,
   });
-  const [achievements, setAchievements] = useState([]);
-  const [recentSkills, setRecentSkills] = useState([]); // ✅ new state
+  const [recentSkills, setRecentSkills] = useState([]); // ✅ recent skills only
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -44,17 +41,10 @@ const Dashboard = () => {
 
       try {
         // Fetch profile
-        const profileRes = await axios
-          .get("http://localhost:5000/api/users/me", {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .catch((err) => {
-            throw new Error(
-              `Profile fetch failed: ${err.response?.status} ${
-                err.response?.data?.message || err.message
-              }`
-            );
-          });
+        const profileRes = await axios.get(
+          "http://localhost:5000/api/users/me",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setProfile(profileRes.data);
 
         // Fetch counts
@@ -81,14 +71,6 @@ const Dashboard = () => {
           milestonesCount: milestonesRes.data.count || 0,
           logsCount: logsRes.data.count || 0,
         });
-
-        // Fetch achievements
-        const achievementsRes = await axios
-          .get("http://localhost:5000/api/achievements", {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .catch(() => ({ data: [] }));
-        setAchievements(achievementsRes.data || []);
 
         // ✅ Fetch last 3 recent skills
         const recentSkillsRes = await axios
@@ -120,6 +102,7 @@ const Dashboard = () => {
     );
   }
 
+  // ✅ Static Achievements (since API removed)
   const defaultAchievements = [
     {
       title: "Skill Initiator",
@@ -138,9 +121,6 @@ const Dashboard = () => {
     },
   ];
 
-  const displayAchievements =
-    achievements.length > 0 ? achievements : defaultAchievements;
-
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-purple-100 to-pink-100">
       {/* Sidebar */}
@@ -156,13 +136,6 @@ const Dashboard = () => {
               Dashboard
             </Link>
             <Link
-              to="/feed"
-              className="flex items-center gap-3 hover:text-purple-600"
-            >
-              <Rss className="w-5 h-5" />
-              Feed
-            </Link>
-            <Link
               to="/skill-repository"
               className="flex items-center gap-3 hover:text-purple-600"
             >
@@ -173,7 +146,7 @@ const Dashboard = () => {
               to="/milestones"
               className="flex items-center gap-3 hover:text-purple-600"
             >
-              <Target className="w-5 h-5" />
+              <BookOpen className="w-5 h-5" />
               Milestones
             </Link>
             <Link
@@ -259,13 +232,13 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Achievements */}
+        {/* Achievements (Static now) */}
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4 text-purple-700 flex items-center gap-2">
             <Trophy className="w-5 h-5 text-yellow-500" /> Unlocked Achievements
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {displayAchievements.map((achieve) => (
+            {defaultAchievements.map((achieve) => (
               <div
                 key={achieve.title}
                 className="bg-gradient-to-br from-white to-purple-50 p-4 rounded-xl shadow hover:shadow-lg transition-all"

@@ -2,16 +2,28 @@ import { useEffect, useState } from 'react';
 import { Github } from 'lucide-react';
 import googleLogo from '../assets/google-logo.svg';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../config.js'
+import { API_BASE_URL } from '../config.js';
 
 const Login = () => {
   const [warning, setWarning] = useState('');
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  // ✅ Choose backend & frontend dynamically
+  const BACKEND_URL =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5000"
+      : "https://skillhub-backend.vercel.app"; // change if backend is hosted elsewhere
+
+  const FRONTEND_URL =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5173"
+      : "https://skillhub.krutiknaina.com";
+
   useEffect(() => {
     const listener = (event) => {
-      const allowedOrigins = ['http://localhost:5000', 'http://localhost:5173','https://skill-hub-backend-4b6u.vercel.app', 'https://skillhub.krutiknaina.com/'];
+      // Only accept messages from allowed origins
+      const allowedOrigins = [BACKEND_URL, FRONTEND_URL];
       if (!allowedOrigins.includes(event.origin)) return;
 
       if (event.data?.type === 'oauth-success') {
@@ -49,15 +61,13 @@ const Login = () => {
     );
   };
 
-
   const handleGoogleLogin = () => {
-    openPopup('https://skillhub.krutiknaina.com//auth/google', 'Google');
+    openPopup(`${BACKEND_URL}/auth/google`, 'Google');
   };
-  
+
   const handleGithubLogin = () => {
-    openPopup('https://skillhub.krutiknaina.com//auth/github', 'GitHub');
+    openPopup(`${BACKEND_URL}/auth/github`, 'GitHub');
   };
-  
 
   return (
     <section className="w-full min-h-screen flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
