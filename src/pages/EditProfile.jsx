@@ -4,6 +4,11 @@ import { Github, Linkedin, Twitter, UploadCloud } from 'lucide-react';
 import axios from 'axios';
 import DashboardNavbar from '../components/DashboardNavbar';
 
+const BACKEND_URL =
+  import.meta.env.MODE === 'development'
+    ? 'http://localhost:5000'
+    : 'https://skillhub-backend.vercel.app';
+
 const EditProfile = () => {
   const [avatar, setAvatar] = useState('');
   const [name, setName] = useState('');
@@ -14,9 +19,9 @@ const EditProfile = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate(); // ✅ Navigation hook
+  const navigate = useNavigate();
 
-  // ✅ Fetch current profile data when page loads
+  // Fetch current profile data on load
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -26,8 +31,8 @@ const EditProfile = () => {
           return;
         }
 
-        const res = await axios.get('http://localhost:5000/api/users/me', {
-          headers: { Authorization: `Bearer ${token}` }
+        const res = await axios.get(`${BACKEND_URL}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const user = res.data;
@@ -48,7 +53,7 @@ const EditProfile = () => {
     fetchProfile();
   }, []);
 
-  // ✅ Handle avatar preview before uploading
+  // Handle avatar preview before uploading
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -58,7 +63,7 @@ const EditProfile = () => {
     }
   };
 
-  // ✅ Submit updated data to backend
+  // Submit updated data
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -69,31 +74,22 @@ const EditProfile = () => {
       }
 
       const res = await axios.put(
-        'http://localhost:5000/api/users/me',
-        {
-          name,
-          bio,
-          avatar,
-          github,
-          linkedin,
-          twitter
-        },
+        `${BACKEND_URL}/api/users/me`,
+        { name, bio, avatar, github, linkedin, twitter },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         }
       );
 
       setMessage('✅ Profile updated successfully!');
       console.log(res.data);
 
-      // ⏳ Show success message briefly, then redirect
       setTimeout(() => {
         navigate('/profile');
       }, 1000);
-
     } catch (err) {
       console.error(err);
       setMessage('❌ Failed to update profile');
@@ -163,7 +159,7 @@ const EditProfile = () => {
               <button
                 type="button"
                 className="px-5 py-2 rounded-lg bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white"
-                onClick={() => navigate('/profile')} // Cancel → profile
+                onClick={() => navigate('/profile')}
               >
                 Cancel
               </button>
@@ -181,7 +177,7 @@ const EditProfile = () => {
   );
 };
 
-// 📦 Reusable Input component
+// Reusable Input component
 const Input = ({ label, icon, ...props }) => (
   <div>
     <label className="block text-sm font-medium mb-1">{label}</label>
@@ -195,7 +191,7 @@ const Input = ({ label, icon, ...props }) => (
   </div>
 );
 
-// 📦 Reusable TextArea component
+// Reusable TextArea component
 const TextArea = ({ label, ...props }) => (
   <div>
     <label className="block text-sm font-medium mb-1">{label}</label>

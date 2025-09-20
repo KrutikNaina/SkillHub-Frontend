@@ -2,10 +2,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddSkillModal from "./AddSkillModal";
-import EditSkillModal from "./EditSkillModel"; // Fixed typo in import
+import EditSkillModal from "./EditSkillModel"; // Fixed import
 import { Plus } from "lucide-react";
 import axios from "axios";
 import DashboardNavbar from "../components/DashboardNavbar";
+
+// ✅ Dynamic backend URL
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : "https://skillhub-backend.vercel.app";
 
 const SkillRepository = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,13 +30,17 @@ const SkillRepository = () => {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No token found");
 
-        const res = await axios.get("http://localhost:5000/api/skills", {
+        const res = await axios.get(`${BACKEND_URL}/api/skills`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         setSkills(res.data || []);
       } catch (err) {
-        setError("Failed to load skills.");
+        setError(
+          err.message === "No token found"
+            ? "Could not load skills. Please log in again."
+            : "Failed to load skills."
+        );
         console.error(err);
       } finally {
         setLoading(false);
@@ -40,9 +50,9 @@ const SkillRepository = () => {
     fetchSkills();
   }, []);
 
-  // Countdown & redirect if error
+  // Countdown & redirect if auth error
   useEffect(() => {
-    if (error) {
+    if (error && error.includes("log in again")) {
       const interval = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -66,7 +76,7 @@ const SkillRepository = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
 
-      await axios.delete(`http://localhost:5000/api/skills/${id}`, {
+      await axios.delete(`${BACKEND_URL}/api/skills/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -83,7 +93,7 @@ const SkillRepository = () => {
       if (!token) throw new Error("No token found");
 
       const res = await axios.put(
-        `http://localhost:5000/api/skills/${id}`,
+        `${BACKEND_URL}/api/skills/${id}`,
         updatedData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -97,8 +107,8 @@ const SkillRepository = () => {
     }
   };
 
-  // 🔹 If error, only show error block (hide everything else)
-  if (error) {
+  // 🔹 Error block
+  if (error && error.includes("log in again")) {
     return (
       <>
         <DashboardNavbar />

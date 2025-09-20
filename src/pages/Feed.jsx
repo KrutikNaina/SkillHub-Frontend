@@ -1,33 +1,33 @@
 import { useState, useEffect } from "react";
 import DashboardNavbar from "../components/DashboardNavbar";
 
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : "https://skillhub-backend.vercel.app";
+
 const Feed = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Fetch all users for feed (excluding logged-in user)
+  // Fetch feed users
   useEffect(() => {
     const fetchFeed = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
-        setLoading(true);
-        setError(null);
-
         const token = localStorage.getItem("token");
-        if (!token) {
-          setError("No token found. Please log in again.");
-          setLoading(false);
-          return;
-        }
+        if (!token) throw new Error("No token found. Please log in again.");
 
-        const res = await fetch("http://localhost:5000/api/feed", {
+        const res = await fetch(`${BACKEND_URL}/api/feed`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
         });
 
         if (!res.ok) {
@@ -36,7 +36,7 @@ const Feed = () => {
         }
 
         const data = await res.json();
-        setUsers(data); // ✅ backend must provide isFollowing
+        setUsers(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -51,29 +51,44 @@ const Feed = () => {
     document.title = "Feed | SkillHub";
   }, []);
 
-  // 🔹 Follow User (FIXED ✅)
-  const handleFollow = async (userId) => {
+  // Follow / Unfollow Handlers
+  const handleFollow = async (userId) => updateFollow(userId, true);
+  const handleUnfollow = async (userId) => updateFollow(userId, false);
+
+  const updateFollow = async (userId, follow) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return alert("Please log in first.");
 
-      const res = await fetch("http://localhost:5000/api/followers/follow", {
+      const endpoint = follow
+        ? `${BACKEND_URL}/api/followers/follow`
+        : `${BACKEND_URL}/api/followers/unfollow`;
+
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ userId }), // ✅ match backend
+        body: JSON.stringify({ userId }),
       });
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.message || "Failed to follow user");
+        throw new Error(errData.message || "Failed to update follow status");
       }
 
       setUsers((prev) =>
         prev.map((u) =>
-          u._id === userId ? { ...u, isFollowing: true, followersCount: (u.followersCount || 0) + 1 } : u
+          u._id === userId
+            ? {
+                ...u,
+                isFollowing: follow,
+                followersCount: follow
+                  ? (u.followersCount || 0) + 1
+                  : Math.max((u.followersCount || 1) - 1, 0),
+              }
+            : u
         )
       );
     } catch (err) {
@@ -81,37 +96,7 @@ const Feed = () => {
     }
   };
 
-  // 🔹 Unfollow User (FIXED ✅)
-  const handleUnfollow = async (userId) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return alert("Please log in first.");
-
-      const res = await fetch("http://localhost:5000/api/followers/unfollow", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ userId }), // ✅ match backend
-      });
-
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Failed to unfollow user");
-      }
-
-      setUsers((prev) =>
-        prev.map((u) =>
-          u._id === userId ? { ...u, isFollowing: false, followersCount: Math.max((u.followersCount || 1) - 1, 0) } : u
-        )
-      );
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  // 🔹 Card Component
+  // User Card Component
   const UserCard = ({ user }) => (
     <div
       onClick={() => setSelectedUser(user)}
@@ -122,19 +107,13 @@ const Feed = () => {
         alt={user.displayName}
         className="w-20 h-20 rounded-full object-cover mb-4 border-2 border-blue-500 shadow-md"
       />
-
-      <h3 className="text-lg font-semibold text-blue-600">
-        {user.displayName}
-      </h3>
-
+      <h3 className="text-lg font-semibold text-blue-600">{user.displayName}</h3>
       <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
         {user.bio || "No bio added yet."}
       </p>
-
       <div className="mt-2 text-xs text-gray-500">
         {user.followersCount || 0} Followers • {user.followingCount || 0} Following
       </div>
-
       <div className="mt-4">
         {user.isFollowing ? (
           <button
@@ -161,7 +140,7 @@ const Feed = () => {
     </div>
   );
 
-  // 🔹 Modal Component
+  // User Modal
   const UserModal = ({ user, onClose }) => {
     if (!user) return null;
     return (
@@ -173,21 +152,17 @@ const Feed = () => {
           >
             ✕
           </button>
-
           <img
             src={user.avatar || "https://via.placeholder.com/150"}
             alt={user.displayName}
             className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-2 border-blue-500 shadow-md"
           />
-
           <h2 className="text-xl font-bold text-center text-blue-600">
             {user.displayName}
           </h2>
-
           <p className="text-center text-gray-600 dark:text-gray-300 mt-2">
             {user.bio || "No bio available."}
           </p>
-
           <div className="flex justify-center gap-6 mt-4 text-sm text-gray-500">
             <span>{user.followersCount || 0} Followers</span>
             <span>{user.followingCount || 0} Following</span>
@@ -206,17 +181,11 @@ const Feed = () => {
             <h1 className="text-4xl font-bold text-blue-600">User Feed</h1>
           </div>
 
-          {loading && (
-            <p className="text-center text-gray-500">Loading users...</p>
-          )}
+          {loading && <p className="text-center text-gray-500">Loading users...</p>}
           {error && <p className="text-center text-red-600">{error}</p>}
-
           {!loading && !error && users.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-gray-600 dark:text-gray-400 text-lg">
-                No followers added yet <br />
-                Not following anyone yet
-              </p>
+            <div className="text-center py-20 text-gray-600 dark:text-gray-400 text-lg">
+              No users to show yet. <br /> Follow others to see their updates.
             </div>
           )}
 

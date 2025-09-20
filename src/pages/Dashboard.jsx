@@ -28,67 +28,71 @@ const Dashboard = () => {
     navigate("/login");
   };
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("No token found, redirecting to login");
-        setError("Authentication token missing. Please log in again.");
-        setLoading(false);
-        navigate("/login");
-        return;
-      }
+  const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : "https://skillhub-backend.vercel.app";
 
-      try {
-        // Fetch profile
-        const profileRes = await axios.get(
-          "http://localhost:5000/api/users/me",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setProfile(profileRes.data);
+useEffect(() => {
+  const fetchDashboardData = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Authentication token missing. Please log in again.");
+      setLoading(false);
+      navigate("/login");
+      return;
+    }
 
-        // Fetch counts
-        const skillsRes = await axios
-          .get("http://localhost:5000/api/skills/count", {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .catch(() => ({ data: { count: 0 } }));
+    try {
+      // Fetch profile
+      const profileRes = await axios.get(`${BACKEND_URL}/api/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfile(profileRes.data);
 
-        const milestonesRes = await axios
-          .get("http://localhost:5000/api/milestones/count", {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .catch(() => ({ data: { count: 0 } }));
+      // Fetch counts
+      const skillsRes = await axios
+        .get(`${BACKEND_URL}/api/skills/count`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .catch(() => ({ data: { count: 0 } }));
 
-        const logsRes = await axios
-          .get("http://localhost:5000/api/progresslogs/count", {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .catch(() => ({ data: { count: 0 } }));
+      const milestonesRes = await axios
+        .get(`${BACKEND_URL}/api/milestones/count`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .catch(() => ({ data: { count: 0 } }));
 
-        setStats({
-          skillsCount: skillsRes.data.count || 0,
-          milestonesCount: milestonesRes.data.count || 0,
-          logsCount: logsRes.data.count || 0,
-        });
+      const logsRes = await axios
+        .get(`${BACKEND_URL}/api/progresslogs/count`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .catch(() => ({ data: { count: 0 } }));
 
-        // ✅ Fetch last 3 recent skills
-        const recentSkillsRes = await axios
-          .get("http://localhost:5000/api/skills/recent", {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .catch(() => ({ data: [] }));
-        setRecentSkills(recentSkillsRes.data || []);
-      } catch (err) {
-        console.error("Error loading dashboard data:", err);
-        setError(`Failed to load dashboard: ${err.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setStats({
+        skillsCount: skillsRes.data.count || 0,
+        milestonesCount: milestonesRes.data.count || 0,
+        logsCount: logsRes.data.count || 0,
+      });
 
-    fetchDashboardData();
-  }, [navigate]);
+      // Fetch last 3 recent skills
+      const recentSkillsRes = await axios
+        .get(`${BACKEND_URL}/api/skills/recent`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .catch(() => ({ data: [] }));
+
+      setRecentSkills(recentSkillsRes.data || []);
+    } catch (err) {
+      console.error("Error loading dashboard data:", err);
+      setError(`Failed to load dashboard: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchDashboardData();
+}, [navigate]);
 
   if (loading) {
     return <p className="text-center mt-10">Loading dashboard...</p>;

@@ -4,6 +4,12 @@ import DashboardNavbar from "../components/DashboardNavbar";
 import { Trophy, Calendar, Flame, PlusCircle } from "lucide-react";
 import axios from "axios";
 
+// ✅ Dynamic backend URL based on environment
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : "https://skillhub-backend.vercel.app";
+
 const Milestones = () => {
   const [milestones, setMilestones] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,10 +29,9 @@ const Milestones = () => {
   const fetchMilestones = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/milestones/user", {
+      const res = await axios.get(`${BACKEND_URL}/api/milestones/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // Extract the milestones array from response
       setMilestones(res.data.milestones || []);
     } catch (err) {
       console.error("Error fetching milestones:", err);
@@ -34,18 +39,15 @@ const Milestones = () => {
       setLoading(false);
     }
   };
-  
 
   const handleAddMilestone = async (e) => {
     e.preventDefault();
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "http://localhost:5000/api/milestones/create",
-        formData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.post(`${BACKEND_URL}/api/milestones/create`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setFormData({
         type: "",
         badge: "",

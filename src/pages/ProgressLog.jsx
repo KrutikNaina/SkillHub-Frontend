@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
 import AddProgressLogModal from "./AddProgressLogModal";
-import EditProgressLogModal from "./EditProgressLogModel"; // ✅ new import
+import EditProgressLogModal from "./EditProgressLogModel";
 import { CalendarDays, Trash2, Pencil } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
+
+// ✅ Dynamic backend URL
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : "https://skillhub-backend.vercel.app";
 
 const ProgressLog = ({ token }) => {
   const [logs, setLogs] = useState([]);
@@ -20,11 +26,9 @@ const ProgressLog = ({ token }) => {
         if (!token) throw new Error("No token found");
 
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/progresslogs/user", {
+        const res = await fetch(`${BACKEND_URL}/api/progresslogs/user`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!res.ok) {
@@ -66,11 +70,9 @@ const ProgressLog = ({ token }) => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
 
-      const res = await fetch(`http://localhost:5000/api/progresslogs/${id}`, {
+      const res = await fetch(`${BACKEND_URL}/api/progresslogs/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) {
@@ -100,7 +102,6 @@ const ProgressLog = ({ token }) => {
       <div className="p-6 rounded-2xl shadow-md hover:shadow-xl bg-white dark:bg-gray-800 relative transition">
         {/* Date + Action Buttons */}
         <div className="absolute top-3 right-3 flex flex-col items-end gap-2">
-          {/* Date shown above buttons */}
           <span className="text-sm text-gray-600 dark:text-gray-400">
             {new Date(log.date).toLocaleDateString()}
           </span>
@@ -108,7 +109,7 @@ const ProgressLog = ({ token }) => {
             <button
               onClick={() => {
                 setEditingLog(log);
-                setIsEditModalOpen(true); // ✅ open edit modal
+                setIsEditModalOpen(true);
               }}
               className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white shadow-md transition transform hover:scale-110"
               title="Edit Log"
@@ -153,9 +154,7 @@ const ProgressLog = ({ token }) => {
           <div className="mt-3 aspect-w-16 aspect-h-9">
             <iframe
               className="rounded-lg w-full h-64"
-              src={`https://www.youtube.com/embed/${extractYouTubeID(
-                log.video
-              )}`}
+              src={`https://www.youtube.com/embed/${extractYouTubeID(log.video)}`}
               title="YouTube video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -191,9 +190,7 @@ const ProgressLog = ({ token }) => {
               My Skill Logs
             </h1>
             <button
-              onClick={() => {
-                setIsAddModalOpen(true);
-              }}
+              onClick={() => setIsAddModalOpen(true)}
               className="px-5 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
             >
               + Add Log
@@ -201,9 +198,7 @@ const ProgressLog = ({ token }) => {
           </div>
 
           {/* Loader / Error / Empty State */}
-          {loading && (
-            <p className="text-center text-gray-500">Loading logs...</p>
-          )}
+          {loading && <p className="text-center text-gray-500">Loading logs...</p>}
           {error && <p className="text-center text-red-600">{error}</p>}
 
           {!loading && !error && logs.length === 0 && (
@@ -243,7 +238,7 @@ const ProgressLog = ({ token }) => {
           setIsEditModalOpen(false);
           setEditingLog(null);
         }}
-        onUpdate={handleUpdateLog} // ✅ was onLogUpdated
+        onUpdate={handleUpdateLog}
         token={token}
         editingLog={editingLog}
       />

@@ -10,6 +10,12 @@ const AddMilestone = ({ isOpen, onClose, onAdd, token }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // ✅ Backend URL dynamic based on environment
+  const BACKEND_URL =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5000"
+      : "https://skill-hub-backend-4b6u.vercel.app";
+
   useEffect(() => {
     if (isOpen) {
       setFormData({
@@ -31,7 +37,7 @@ const AddMilestone = ({ isOpen, onClose, onAdd, token }) => {
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:5000/api/milestones/create", {
+      const res = await fetch(`${BACKEND_URL}/api/milestones/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +75,6 @@ const AddMilestone = ({ isOpen, onClose, onAdd, token }) => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Milestone Type */}
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
               Milestone Type
@@ -85,7 +90,6 @@ const AddMilestone = ({ isOpen, onClose, onAdd, token }) => {
             />
           </div>
 
-          {/* Badge */}
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
               Badge Name
@@ -100,7 +104,6 @@ const AddMilestone = ({ isOpen, onClose, onAdd, token }) => {
             />
           </div>
 
-          {/* Achieved On */}
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
               Achieved On
@@ -114,7 +117,6 @@ const AddMilestone = ({ isOpen, onClose, onAdd, token }) => {
             />
           </div>
 
-          {/* Buttons */}
           <div className="flex justify-end gap-4 mt-6">
             <button
               type="button"
