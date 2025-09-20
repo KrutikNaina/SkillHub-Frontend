@@ -5,6 +5,8 @@ import { Pencil, Github, Linkedin, Twitter } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 import { useNavigate } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"; // fallback to localhost
+
 const Profile = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
@@ -22,25 +24,25 @@ const Profile = () => {
       if (!token) throw new Error("No token found");
 
       // User profile
-      const resProfile = await axios.get("http://localhost:5000/api/users/me", {
+      const resProfile = await axios.get(`${API_URL}/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProfile(resProfile.data);
 
       // Skills
-      const resSkills = await axios.get("http://localhost:5000/api/skills", {
+      const resSkills = await axios.get(`${API_URL}/api/skills`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSkills(resSkills.data);
+      setSkills(resSkills.data || []);
 
       // Followers & Following Counts
       const resCounts = await axios.get(
-        `http://localhost:5000/api/followers/${resProfile.data._id}/counts`,
+        `${API_URL}/api/followers/${resProfile.data._id}/counts`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCounts({
-        followers: resCounts.data.followersCount,
-        following: resCounts.data.followingCount,
+        followers: resCounts.data?.followersCount || 0,
+        following: resCounts.data?.followingCount || 0,
       });
     } catch (err) {
       console.error(err.response || err);
@@ -50,6 +52,7 @@ const Profile = () => {
           : "Failed to load profile data.";
       setError(errorMessage);
 
+      // Redirect to login after countdown
       if (err.message === "No token found") {
         let timer = setInterval(() => {
           setCountdown((prev) => {
@@ -115,22 +118,22 @@ const Profile = () => {
               alt={profile?.displayName || "User Avatar"}
               className="w-28 h-28 rounded-full mx-auto border-4 border-blue-600 shadow-md object-cover"
             />
-            <h1 className="text-3xl font-bold mt-4">{profile.displayName}</h1>
+            <h1 className="text-3xl font-bold mt-4">{profile?.displayName || "User"}</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
-              {profile.bio || "No bio yet"} 🚀
+              {profile?.bio || "No bio yet"} 🚀
             </p>
             <div className="flex justify-center gap-5 mt-4">
-              {profile.github && (
+              {profile?.github && (
                 <a href={profile.github} target="_blank" rel="noreferrer">
                   <Github className="w-5 h-5 hover:text-blue-500 transition" />
                 </a>
               )}
-              {profile.linkedin && (
+              {profile?.linkedin && (
                 <a href={profile.linkedin} target="_blank" rel="noreferrer">
                   <Linkedin className="w-5 h-5 hover:text-blue-500 transition" />
                 </a>
               )}
-              {profile.twitter && (
+              {profile?.twitter && (
                 <a href={profile.twitter} target="_blank" rel="noreferrer">
                   <Twitter className="w-5 h-5 hover:text-blue-500 transition" />
                 </a>
@@ -164,15 +167,11 @@ const Profile = () => {
             <div className="flex justify-center gap-10 text-lg">
               <p className="text-gray-700 dark:text-gray-300">
                 Followers:{" "}
-                <span className="font-semibold text-blue-600">
-                  {counts.followers}
-                </span>
+                <span className="font-semibold text-blue-600">{counts.followers}</span>
               </p>
               <p className="text-gray-700 dark:text-gray-300">
                 Following:{" "}
-                <span className="font-semibold text-blue-600">
-                  {counts.following}
-                </span>
+                <span className="font-semibold text-blue-600">{counts.following}</span>
               </p>
             </div>
           </div>
@@ -182,11 +181,10 @@ const Profile = () => {
   );
 };
 
+// Skill Card
 const Card = ({ title, description }) => (
   <div className="p-6 rounded-2xl bg-gradient-to-br from-white/90 to-gray-100/90 dark:from-gray-900/90 dark:to-gray-800/90 border border-gray-200 dark:border-gray-700 shadow-md hover:shadow-xl hover:-translate-y-1 transition cursor-pointer">
-    <h3 className="font-semibold text-xl mb-2 text-blue-600 dark:text-blue-400">
-      {title}
-    </h3>
+    <h3 className="font-semibold text-xl mb-2 text-blue-600 dark:text-blue-400">{title}</h3>
     <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">
       {description || "No description provided"}
     </p>
