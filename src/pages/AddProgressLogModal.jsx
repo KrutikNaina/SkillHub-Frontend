@@ -1,4 +1,3 @@
-// src/pages/AddProgressLogModal.jsx
 import { useState, useEffect } from "react";
 
 const AddProgressLogModal = ({ isOpen, onClose, onAdd, token }) => {
@@ -11,12 +10,6 @@ const AddProgressLogModal = ({ isOpen, onClose, onAdd, token }) => {
   const [video, setVideo] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // ✅ Backend URL dynamic based on environment
-  const BACKEND_URL =
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5000"
-      : "https://skill-hub-backend-4b6u.vercel.app";
 
   useEffect(() => {
     if (isOpen) {
@@ -35,14 +28,14 @@ const AddProgressLogModal = ({ isOpen, onClose, onAdd, token }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    const authToken = token || localStorage.getItem("token");
-    if (!authToken) {
+  
+    const token = localStorage.getItem("token");
+    if (!token) {
       setError("No token found. Please log in.");
       setLoading(false);
       return;
     }
-
+  
     const payload = {
       date,
       skillTitle,
@@ -52,24 +45,28 @@ const AddProgressLogModal = ({ isOpen, onClose, onAdd, token }) => {
       image: image || null,
       video: video || null,
     };
-
+  
     try {
-      const res = await fetch(`${BACKEND_URL}/api/progresslogs/create`, {
+      const res = await fetch("http://localhost:5000/api/progresslogs/create", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
-
+  
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.message || "Failed to add progress log");
       }
-
+  
       const newLog = await res.json();
+  
+      // Update parent state
       onAdd(newLog);
+  
+      // Close modal
       onClose();
     } catch (err) {
       setError(err.message);
@@ -77,6 +74,7 @@ const AddProgressLogModal = ({ isOpen, onClose, onAdd, token }) => {
       setLoading(false);
     }
   };
+  
 
   if (!isOpen) return null;
 
@@ -95,6 +93,8 @@ const AddProgressLogModal = ({ isOpen, onClose, onAdd, token }) => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Date, Skill Title, Skill ID, Notes, Completion, Image, Video inputs same as before */}
+
           {/* Date */}
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">

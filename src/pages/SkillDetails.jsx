@@ -4,12 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DashboardNavbar from "../components/DashboardNavbar";
 
-// ✅ Dynamic backend URL
-const BACKEND_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:5000"
-    : "https://skillhub-backend.vercel.app";
-
 const SkillDetails = () => {
   const { id } = useParams();
   const [skill, setSkill] = useState(null);
@@ -24,7 +18,7 @@ const SkillDetails = () => {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No token found");
 
-        const res = await axios.get(`${BACKEND_URL}/api/skills/${id}`, {
+        const res = await axios.get(`http://localhost:5000/api/skills/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setSkill(res.data);
