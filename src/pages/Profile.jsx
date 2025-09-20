@@ -16,32 +16,26 @@ const Profile = () => {
 
   const token = localStorage.getItem("token");
 
-  // ✅ Dynamic backend URL
-  const BACKEND_URL =
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5000"
-      : "https://skill-hub-backend-4b6u.vercel.app";
-
   // Fetch profile, skills, and follower counts
   const fetchProfile = async () => {
     try {
       if (!token) throw new Error("No token found");
 
       // User profile
-      const resProfile = await axios.get(`${BACKEND_URL}/api/users/me`, {
+      const resProfile = await axios.get("http://localhost:5000/api/users/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProfile(resProfile.data);
 
       // Skills
-      const resSkills = await axios.get(`${BACKEND_URL}/api/skills`, {
+      const resSkills = await axios.get("http://localhost:5000/api/skills", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSkills(resSkills.data);
 
       // Followers & Following Counts
       const resCounts = await axios.get(
-        `${BACKEND_URL}/api/followers/${resProfile.data._id}/counts`,
+        `http://localhost:5000/api/followers/${resProfile.data._id}/counts`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCounts({
