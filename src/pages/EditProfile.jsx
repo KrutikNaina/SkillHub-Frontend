@@ -1,13 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Github, Linkedin, Twitter, UploadCloud } from 'lucide-react';
-import axios from 'axios';
 import DashboardNavbar from '../components/DashboardNavbar';
-
-const BACKEND_URL =
-  import.meta.env.MODE === 'development'
-    ? 'http://localhost:5000'
-    : 'https://skillhub-backend.vercel.app';
+import api from '../services/api';
 
 const EditProfile = () => {
   const [avatar, setAvatar] = useState('');
@@ -21,21 +16,13 @@ const EditProfile = () => {
 
   const navigate = useNavigate();
 
-  // Fetch current profile data on load
+  // Fetch current profile data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setMessage('No token found — please log in again');
-          return;
-        }
-
-        const res = await axios.get(`${BACKEND_URL}/api/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        const res = await api.get('/api/users/me');
         const user = res.data;
+
         setName(user.displayName || '');
         setBio(user.bio || '');
         setGithub(user.github || '');
@@ -44,7 +31,7 @@ const EditProfile = () => {
         setAvatar(user.avatar || '');
       } catch (err) {
         console.error(err);
-        setMessage('❌ Failed to load profile');
+        setMessage('❌ Failed to load profile. Please log in again.');
       } finally {
         setLoading(false);
       }
@@ -53,7 +40,7 @@ const EditProfile = () => {
     fetchProfile();
   }, []);
 
-  // Handle avatar preview before uploading
+  // Avatar preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -67,38 +54,27 @@ const EditProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setMessage('No token found — please log in again');
-        return;
-      }
-
-      const res = await axios.put(
-        `${BACKEND_URL}/api/users/me`,
-        { name, bio, avatar, github, linkedin, twitter },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const res = await api.put('/api/users/me', {
+        name,
+        bio,
+        avatar,
+        github,
+        linkedin,
+        twitter,
+      });
 
       setMessage('✅ Profile updated successfully!');
       console.log(res.data);
 
-      setTimeout(() => {
-        navigate('/profile');
-      }, 1000);
+      setTimeout(() => navigate('/profile'), 1000);
     } catch (err) {
       console.error(err);
       setMessage('❌ Failed to update profile');
     }
   };
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading...</p>;
-  }
+  if (loading)
+    return <p className="text-center mt-10 text-gray-500 animate-pulse">Loading...</p>;
 
   return (
     <>
@@ -154,7 +130,6 @@ const EditProfile = () => {
               <div className="text-center mt-4 text-sm font-medium">{message}</div>
             )}
 
-            {/* Buttons */}
             <div className="flex justify-end gap-4 mt-6">
               <button
                 type="button"
