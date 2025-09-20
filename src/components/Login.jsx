@@ -8,7 +8,7 @@ const Login = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // ✅ Choose backend & frontend dynamically
+  // Backend & frontend URLs (dev & production)
   const BACKEND_URL =
     import.meta.env.MODE === "development"
       ? "http://localhost:5000"
@@ -19,9 +19,9 @@ const Login = () => {
       ? "http://localhost:5173"
       : "https://skillhub.krutiknaina.com";
 
+  // Listen for OAuth success message
   useEffect(() => {
     const listener = (event) => {
-      // Only accept messages from allowed origins
       const allowedOrigins = [BACKEND_URL, FRONTEND_URL];
       if (!allowedOrigins.includes(event.origin)) return;
 
@@ -31,22 +31,26 @@ const Login = () => {
         if (token) {
           localStorage.setItem('token', token);
 
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          setUser(payload);
-
-          navigate('/profile');
+          try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            setUser(payload);
+            navigate('/profile');
+          } catch {
+            setWarning('Invalid token format.');
+          }
         } else {
           setWarning('Token missing in OAuth response.');
         }
-      }
 
-      window.removeEventListener('message', listener);
+        window.removeEventListener('message', listener);
+      }
     };
 
     window.addEventListener('message', listener);
     return () => window.removeEventListener('message', listener);
   }, [navigate]);
 
+  // Open OAuth popup
   const openPopup = (url, provider) => {
     const width = 500;
     const height = 600;
@@ -60,13 +64,9 @@ const Login = () => {
     );
   };
 
-  const handleGoogleLogin = () => {
-    openPopup(`${BACKEND_URL}/auth/google`, 'Google');
-  };
-
-  const handleGithubLogin = () => {
-    openPopup(`${BACKEND_URL}/auth/github`, 'GitHub');
-  };
+  // OAuth handlers
+  const handleGoogleLogin = () => openPopup(`${BACKEND_URL}/auth/google`, 'Google');
+  const handleGithubLogin = () => openPopup(`${BACKEND_URL}/auth/github`, 'GitHub');
 
   return (
     <section className="w-full min-h-screen flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
